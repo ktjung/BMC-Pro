@@ -135,7 +135,7 @@ chart = new Chart(ctx, {
         data: btcAmounts,
         borderColor: "orange",
         backgroundColor: "rgba(255, 165, 0, 0.3)",
-        yAxisID: 'y1',
+        yAxisID: 'y1',  // y1 축 사용
         tension: 0.3,
         borderWidth: 3,
         zIndex: 100
@@ -144,13 +144,13 @@ chart = new Chart(ctx, {
         label: "순이익 ($)",
         data: profits,
         backgroundColor: barColors,
-        yAxisID: 'y',
+        yAxisID: 'y', // 기본 y 축 사용
       },
       {
         label: "투자금 ($)",
         data: investments,
         backgroundColor: "rgba(128, 128, 128, 0.4)",
-        yAxisID: 'y',
+        yAxisID: 'y', // 기본 y 축 사용
       }
     ]
   },
