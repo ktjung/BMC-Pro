@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTC 채굴 수익 계산기</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div style="text-align: right; margin-bottom: 10px;">
+  <label style="cursor: pointer;">
+    🌙 다크모드
+    <label class="switch">
+      <input type="checkbox" id="darkToggle" />
+      <span class="slider"></span>
+    </label>
+  </label>
+</div>
+
+<div>
+<h2>
+  BTC 채굴 수익 계산기
+  <span
+    style="color: red; font-size: 14px; font-weight: normal; margin-left: 10px; cursor: pointer;"
+    data-info="Instructions"
+    span class="info-icon"
+  >
+    [사용방법]
+  </span>
+</h2>
+
+</div>
+<!-- 사용자 지정 입력 필드 추가 -->
+<div class="row-3">
+  <div>
+    <label>BTC 블록 보상 (BTC)<span class="info-icon" data-info="block_reward" style="color: red; margin-left: 10px;">ⓘ</span></label>
+    <input type="number" step="any" id="custom_block_reward" placeholder="예: 3.125" />
+  </div>
+  <div>
+    <label>BTC 시세 ($)<span class="info-icon" data-info="btc_price" style="color: red; margin-left: 10px;">ⓘ</span></label>
+    <input type="number" step="any" id="custom_btc_price" placeholder="자동 불러오기" />
+  </div>
+  <div>
+    <label>USD → KRW 환율<span class="info-icon" data-info="usd_krw" style="color: red; margin-left: 10px;">ⓘ</span></label>
+    <input type="number" step="any" id="custom_usd_krw" placeholder="자동 불러오기" />
+  </div>
+</div>
+
+<div class="hashrate-selection">
+  <label><input type="radio" name="hashrate_unit" value="TH/s" checked> TH/s</label>
+  <label><input type="radio" name="hashrate_unit" value="GH/s"> GH/s</label>
+  <label><input type="radio" name="hashrate_unit" value="MH/s"> MH/s</label>
+  <label><span class="info-icon" data-info="hashrate" style="color: red; margin-left: -30px;">ⓘ</span></label>
+</div>
+
+<input type="number" id="hashrate" value="670" placeholder="해시레이트" />
+
+<div class="row-3">
+  <div>
+    <label>전기 요금 ($/kwh)<span class="info-icon" data-info="electricity" style="color: red; margin-left: 10px;">ⓘ</span></label>
+    <input type="number" id="electricity" value="0.036" />
+  </div>
+  <div>
+    <label>전력 소비량 (kw/TH)<span class="info-icon" data-info="power" style="color: red; margin-left: 10px;">ⓘ</span></label>
+    <input type="number" id="power" value="0.019" />
+  </div>
+  <div>
+    <label>사용 시간 (h)<span class="info-icon" data-info="hours" style="color: red; margin-left: 10px;">ⓘ</span></label>
+    <input type="number" id="hours" value="24" />
+  </div>
+</div>
+
+<label>풀 수수료 (%)<span class="info-icon" data-info="fee" style="color: red; margin-left: 10px;">ⓘ</span></label>
+<input type="number" id="fee" value="0" />
+
+<label>장비 가격 ($)<span class="info-icon" data-info="hardware_cost" style="color: red; margin-left: 10px;">ⓘ</span></label>
+<input type="number" id="hardware_cost" value="10500" />
+
+<div class="button-container">
+  <button class="calculate-btn" onclick="calculate()">계산하기</button>
+  <button class="exchange-btn" onclick="openModal()">환율적용</button>
+</div>
+
+<div class="result" id="output">
+  <p><strong>BTC 가격:</strong> $<span id="btc_price"></span></p>
+  <p><strong>일일 채굴량 (BTC):</strong> <span id="daily_btc"></span> BTC</p>
+  <p><strong>월간 / 연간 채굴량:</strong> <span id="monthly_btc"></span> BTC / <span id="yearly_btc"></span> BTC</p>
+  <p><strong>일일 수익 (전기요금 -전):</strong> $<span id="daily_rev"></span></p>
+  <p><strong>일일 전기 요금:</strong> $<span id="daily_cost"></span></p>
+  <p><strong>일일 순이익:</strong> $<span id="daily_profit"></span></p>
+  <p><strong>ROI (투자 회수기간):</strong> <span id="roi"></span> 일</p>
+</div>
+
+<canvas id="profitChart"></canvas>
+
+    <!-- 투자금액 회수 시점 텍스트 -->
+    <p id="investmentRecoveryText" style="margin-top: 10px; font-size: 14px; display: none;">
+        <span class="green-circle">■</span>
+        <span style="recovery-text">투자금액을 회수하는 시점입니다.</span>
+    </p>
+
+<div id="exchangeModal">
+  <p><strong>실시간 환율 (USD → KRW):</strong> ₩<span id="exchangeRateDisplay"></span></p>
+  <p><strong>일일 순이익 (KRW):</strong> ₩<span id="dailyProfitKrw"></span></p>
+  <p><strong>월간 순이익 (KRW):</strong> ₩<span id="monthlyProfitKrw"></span></p>
+  <p><strong>연간 순이익 (KRW):</strong> ₩<span id="yearlyProfitKrw"></span></p>
+  <button onclick="closeModal()">닫기</button>
+</div>
+
+<div id="infoModal" class="info-modal">
+  <p id="infoText"></p>
+  <button onclick="closeInfoModal()">닫기</button>
+</div>
+    <script src="script.js"></script>
+</body>
+</html>
