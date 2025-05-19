@@ -183,7 +183,7 @@ chart = new Chart(ctx, {
         position: "right",
         type: 'linear',
         ticks: {
-          callback: value => `${value} BTC`
+          callback: value => `${value}`
         }
       }
     }
