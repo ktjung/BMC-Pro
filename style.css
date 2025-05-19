@@ -249,15 +249,15 @@
     }
 
     body.dark-mode .recovery-text {
-      color: #f1f1f1; /* 다크모드용 텍스트 색상 */
+      color: #f1f1f1; 
     }
 
     body.dark-mode .info-text {
-      color: #f1f1f1; /* 다크 모드에서 밝은 텍스트 색상 */
+      color: #f1f1f1; 
     }
 
     .recovery-text {
-      color: #222; /* 라이트모드 텍스트 색상 */
+      color: #222; 
     }
 
     .info-modal {
@@ -296,7 +296,7 @@
     }
 
     .green-circle {
-      color: rgba(0, 255, 0, 1); /* 연두색 */
-      font-size: 18px; /* 크기를 약간 키움 */
-      margin-right: 5px; /* 텍스트와 아이콘 사이에 간격 추가 */
+      color: rgba(0, 255, 0, 1); 
+      font-size: 18px; 
+      margin-right: 5px; 
     }
