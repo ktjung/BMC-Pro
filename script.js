@@ -119,67 +119,69 @@ if (roi) {
     return "rgba(54, 162, 235, 0.6)";
   });
 
-  const ctx = document.getElementById("profitChart").getContext("2d");
-  if (chart) chart.destroy();
+const ctx = document.getElementById("profitChart").getContext("2d");
+if (chart) {
+  chart.destroy(); // 기존 차트가 있으면 제거
+}
 
-  chart = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: labels.map(l => `${l}일`),
-      datasets: [
-        {
-          type: 'line',
-          label: "BTC 채굴량",
-          data: btcAmounts,
-          borderColor: "orange",
-          backgroundColor: "rgba(255, 165, 0, 0.3)",
-          yAxisID: 'y1',
-          tension: 0.3,
-          borderWidth: 3,
-          zIndex: 100
-        },
-        {
-          label: "순이익 ($)",
-          data: profits,
-          backgroundColor: barColors,
-          yAxisID: 'y',
-        },
-        {
-          label: "투자금 ($)",
-          data: investments,
-          backgroundColor: "rgba(128, 128, 128, 0.4)",
-          yAxisID: 'y',
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: function(tooltipItem) {
-              return `$${tooltipItem.raw}`;
-            }
-          }
-        },
-        legend: { position: "top" }
+chart = new Chart(ctx, {
+  type: "bar",
+  data: {
+    labels: labels.map(l => `${l}일`),
+    datasets: [
+      {
+        type: 'line',
+        label: "BTC 채굴량",
+        data: btcAmounts,
+        borderColor: "orange",
+        backgroundColor: "rgba(255, 165, 0, 0.3)",
+        yAxisID: 'y1',
+        tension: 0.3,
+        borderWidth: 3,
+        zIndex: 100
       },
-      scales: {
-        y: {
-          ticks: {
-            beginAtZero: true,
-            callback: value => `$${value}`
+      {
+        label: "순이익 ($)",
+        data: profits,
+        backgroundColor: barColors,
+        yAxisID: 'y',
+      },
+      {
+        label: "투자금 ($)",
+        data: investments,
+        backgroundColor: "rgba(128, 128, 128, 0.4)",
+        yAxisID: 'y',
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function(tooltipItem) {
+            return `$${tooltipItem.raw}`;
           }
-        },
-        y1: {
-          position: "right",
-          ticks: {
-            callback: value => `${value} BTC` 
-          
+        }
+      },
+      legend: { position: "top" }
+    },
+    scales: {
+      y: {
+        ticks: {
+          beginAtZero: true,
+          callback: value => `$${value}` // y축에 "$" 표시
+        }
+      },
+      y1: {
+        position: "right",
+        ticks: {
+          callback: value => `${value} BTC` // y1축에 "BTC" 표시
         }
       }
     }
-  });
+  }
+});
 
 // 투자금액 회수 시점 문구 표시
 if (roi) {
