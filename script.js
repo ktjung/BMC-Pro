@@ -173,6 +173,7 @@ if (roi) {
         },
         y1: {
           position: "right",
+          type: 'linear',
           ticks: {
             callback: value => `${value} BTC`
           }
