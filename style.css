@@ -252,6 +252,10 @@
       color: #f1f1f1; /* 다크모드용 텍스트 색상 */
     }
 
+    body.dark-mode .info-text {
+      color: #f1f1f1; /* 다크 모드에서 밝은 텍스트 색상 */
+    }
+
     .recovery-text {
       color: #222; /* 라이트모드 텍스트 색상 */
     }
