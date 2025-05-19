@@ -233,7 +233,7 @@ function showInfoModal(event) {
 
   switch (type) {
     case 'Instructions':
-        infoText = "<span style=\"display:block;text-align:left;line-height:1.6;font-size:15px;color:#333;\">각 입력란에는 기본값이 세팅되어있습니다.<br><br>" +
+        infoText = "<span class=\"info-text\" span style=\"display:block;text-align:left;line-height:1.6;font-size:15px;color:#333;\">각 입력란에는 기본값이 세팅되어있습니다.<br><br>" +
                    "① 입력란에 각자에 맞게 값을 입력하세요<br>" +
                    "② [계산하기] 버튼을 눌러서 $(USD) 수익을 확인하세요<br>" +
                    "③ [환율적용] 버튼을 눌러서 KRW 수익을 확인하세요</span><br>" +
