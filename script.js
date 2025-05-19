@@ -174,7 +174,7 @@ if (roi) {
         y1: {
           position: "right",
           ticks: {
-            callback: value => `BTC{value}`
+            callback: value => `$${value}BTC`
           }
         }
       }
