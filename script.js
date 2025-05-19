@@ -174,7 +174,8 @@ if (roi) {
         y1: {
           position: "right",
           ticks: {
-            callback: value => `$BTC${value}`
+            callback: function(value) {
+            return `${value.toFixed(8)} BTC`;`
           }
         }
       }
