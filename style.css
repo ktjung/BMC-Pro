@@ -256,10 +256,6 @@
       color: #333;
     }
 
-    .info-text.red {
-      color: #ff4d4d;
-    }
-
     .info-text.blue {
       color: #42a5f5;
     }
@@ -268,16 +264,8 @@
       color: #f1f1f1; 
     }
 
-    body.dark-mode .info-text.red {
-      color: #ff4d4d; 
-    }
-
     body.dark-mode .info-text.blue {
       color: #42a5f5; 
-    }
-
-    body.dark-mode .info-text:not(.red) {
-      color: #ccc; 
     }
 
     .recovery-text {
