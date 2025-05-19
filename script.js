@@ -152,42 +152,42 @@ chart = new Chart(ctx, {
       }
     ]
   },
-options: {
-  responsive: true,
-  plugins: {
-    tooltip: {
-      callbacks: {
-        label: function(tooltipItem) {
-          const label = tooltipItem.dataset.label;
-          const value = tooltipItem.raw;
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(tooltipItem) {
+              const datasetLabel = tooltipItem.dataset.label || '';
+              const value = tooltipItem.raw;
 
-          if (label.includes("BTC")) {
-            return `${label}: ${Number(value).toFixed(8)} BTC`;
-          } else {
-            return `${label}: $${Number(value).toFixed(2)}`;
+              if (datasetLabel.includes("BTC")) {
+                return `${datasetLabel}: ${parseFloat(value).toFixed(8)} BTC`;
+              } else {
+                return `${datasetLabel}: $${parseFloat(value).toFixed(2)}`;
+              }
+            }
+          }
+        },
+        legend: { position: "top" }
+      },
+      scales: {
+        y: {
+          ticks: {
+            beginAtZero: true,
+            callback: value => `$${value}`
+          }
+        },
+        y1: {
+          position: "right",
+          type: 'linear',
+          ticks: {
+            callback: value => `${value} BTC`
           }
         }
       }
-    },
-    legend: { position: "top" }
-  },
-  scales: {
-    y: {
-      ticks: {
-        beginAtZero: true,
-        callback: value => `$${value}`
-      }
-    },
-    y1: {
-      position: "right",
-      type: 'linear',
-      ticks: {
-        callback: value => `${value} BTC`
-      }
     }
-  }
-}
-});
+  });
   
 // 투자금액 회수 시점 문구 표시
 if (roi) {
