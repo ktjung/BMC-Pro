@@ -238,8 +238,8 @@ function showInfoModal(event) {
                    "② [계산하기] 버튼을 눌러서 $(USD) 수익을 확인하세요<br>" +
                    "③ [환율적용] 버튼을 눌러서 KRW 수익을 확인하세요</span><br>" +
                    "<span style='color:red; font-size: 0.9em;'>*BTC시세, USD 환율은 자동으로 현재 시세를 반영합니다.</span><br>" +
-                   "변동시 직접입력하세요.<br>" +
-                   "<span style='color:blue; font-size: 0.9em;'>*각 항목별 ⓘ 버튼을 눌르면 설명이 나와있습니다.</span><br>";
+                   "<span style='color:blue; font-size: 0.9em;'>*각 항목별 ⓘ 버튼을 눌르면 설명이 나와있습니다.</span><br>"+
+                   "변동시 직접입력하세요.";          
         break;
     case 'block_reward':
         infoText = "비트코인 블록 보상량 (현재 기본값: 3.125 BTC)<br><span style='color:red; font-size: 0.9em;'>*입력하지 않으면 자동으로 3.123 BTC로 적용됩니다.</span><br>변동시 직접입력하세요.";
