@@ -152,42 +152,41 @@ chart = new Chart(ctx, {
       }
     ]
   },
-  options: {
-    responsive: true,
-    plugins: {
-      tooltip: {
-        callbacks: {
-          label: function (tooltipItem) {
-            const label = tooltipItem.dataset.label;
-            const value = tooltipItem.raw;
+options: {
+  responsive: true,
+  plugins: {
+    tooltip: {
+      callbacks: {
+        label: function(tooltipItem) {
+          const label = tooltipItem.dataset.label;
+          const value = tooltipItem.raw;
 
-            // 데이터셋 이름에 따라 단위를 분기
-            if (label.includes("BTC")) {
-              return `${label}: ${value} BTC`;
-            } else {
-              return `${label}: $${value}`;
-            }
+          if (label.includes("BTC")) {
+            return `${label}: ${Number(value).toFixed(8)} BTC`;
+          } else {
+            return `${label}: $${Number(value).toFixed(2)}`;
           }
         }
-      },
-      legend: { position: "top" }
+      }
     },
-    scales: {
-      y: {
-        ticks: {
-          beginAtZero: true,
-          callback: value => `$${value}`
-        }
-      },
-      y1: {
-        position: "right",
-        type: 'linear',
-        ticks: {
-          callback: value => `${value}`
-        }
+    legend: { position: "top" }
+  },
+  scales: {
+    y: {
+      ticks: {
+        beginAtZero: true,
+        callback: value => `$${value}`
+      }
+    },
+    y1: {
+      position: "right",
+      type: 'linear',
+      ticks: {
+        callback: value => `${value} BTC`
       }
     }
   }
+}
 });
   
 // 투자금액 회수 시점 문구 표시
