@@ -122,65 +122,73 @@ if (roi) {
   const ctx = document.getElementById("profitChart").getContext("2d");
   if (chart) chart.destroy();
 
-  chart = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: labels.map(l => `${l}일`),
-      datasets: [
-        {
-          type: 'line',
-          label: "BTC 채굴량",
-          data: btcAmounts,
-          borderColor: "orange",
-          backgroundColor: "rgba(255, 165, 0, 0.3)",
-          yAxisID: 'y1',
-          tension: 0.3,
-          borderWidth: 3,
-          zIndex: 100
-        },
-        {
-          label: "순이익 ($)",
-          data: profits,
-          backgroundColor: barColors,
-          yAxisID: 'y',
-        },
-        {
-          label: "투자금 ($)",
-          data: investments,
-          backgroundColor: "rgba(128, 128, 128, 0.4)",
-          yAxisID: 'y',
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: function(tooltipItem) {
-              return `$${tooltipItem.raw}`;
+chart = new Chart(ctx, {
+  type: "bar",
+  data: {
+    labels: labels.map(l => `${l}일`),
+    datasets: [
+      {
+        type: 'line',
+        label: "BTC 채굴량",
+        data: btcAmounts,
+        borderColor: "orange",
+        backgroundColor: "rgba(255, 165, 0, 0.3)",
+        yAxisID: 'y1',
+        tension: 0.3,
+        borderWidth: 3,
+        zIndex: 100
+      },
+      {
+        label: "순이익 ($)",
+        data: profits,
+        backgroundColor: barColors,
+        yAxisID: 'y',
+      },
+      {
+        label: "투자금 ($)",
+        data: investments,
+        backgroundColor: "rgba(128, 128, 128, 0.4)",
+        yAxisID: 'y',
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem) {
+            const label = tooltipItem.dataset.label;
+            const value = tooltipItem.raw;
+
+            // 데이터셋 이름에 따라 단위를 분기
+            if (label.includes("BTC")) {
+              return `${label}: ${value} BTC`;
+            } else {
+              return `${label}: $${value}`;
             }
           }
-        },
-        legend: { position: "top" }
+        }
       },
-      scales: {
-        y: {
-          ticks: {
-            beginAtZero: true,
-            callback: value => `$${value}`
-          }
-        },
-        y1: {
-          position: "right",
-          type: 'linear',
-          ticks: {
-            callback: value => `${value} BTC`
-          }
+      legend: { position: "top" }
+    },
+    scales: {
+      y: {
+        ticks: {
+          beginAtZero: true,
+          callback: value => `$${value}`
+        }
+      },
+      y1: {
+        position: "right",
+        type: 'linear',
+        ticks: {
+          callback: value => `${value} BTC`
         }
       }
     }
-  });
+  }
+});
   
 // 투자금액 회수 시점 문구 표시
 if (roi) {
