@@ -75,7 +75,7 @@ async function calculate() {
   const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * feePercent / 100);
   const powerInKW = powerRate * userHashrate;
   const dailyCost = powerInKW * hours * electricity;
-  const dailyProfit = revenueAfterFee - dailyCost;
+  const dailyProfit = revenueAfter - dailyCost;
 
   latestProfitUsd = dailyProfit;
   currentROI = dailyProfit > 0 ? Math.ceil(hardwareCost / dailyProfit) : null;
@@ -85,7 +85,7 @@ async function calculate() {
   document.getElementById("daily_btc").textContent = dailyBTC.toFixed(8);
   document.getElementById("monthly_btc").textContent = (dailyBTC * 30).toFixed(8);
   document.getElementById("yearly_btc").textContent = (dailyBTC * 365).toFixed(8);
-  document.getElementById("daily_rev").textContent = revenueAfterFee.toFixed(2);
+  document.getElementById("daily_rev").textContent = revenueAfter.toFixed(2);
   document.getElementById("daily_cost").textContent = dailyCost.toFixed(2);
   document.getElementById("daily_profit").textContent = dailyProfit.toFixed(2);
   document.getElementById("roi").textContent = currentROI ? currentROI : "수익 없음";
@@ -256,7 +256,7 @@ function showInfoModal(event) {
         infoText = "하루 중 채굴하는 시간을 설정합니다.<br><span style='color:red; font-size: 0.9em;'>*기본값은 24h로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
         break;
     case 'fee':
-        infoText = "채굴 풀에서 부과하는 수수료입니다.<br><span style='color:red; font-size: 0.9em;'>*기본값은 0%로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
+        infoText = "채굴 풀에서 부과하는 수수료입니다.<br><span style='color:red; font-size: 0.9em;'>*기본값은 23.4%로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
         break;
     case 'hardware_cost':
         infoText = "채굴에 필요한 장비에 투자한 금액입니다.<br><span style='color:red; font-size: 0.9em;'>*기본값은 $10,500(USD)로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
