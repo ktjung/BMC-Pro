@@ -75,7 +75,7 @@ async function calculate() {
   const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * feePercent / 100);
   const powerInKW = powerRate * userHashrate;
   const dailyCost = powerInKW * hours * electricity;
-  const dailyProfit = revenueAfter - dailyCost;
+  const dailyProfit = revenueAfterFee - dailyCost;
 
   latestProfitUsd = dailyProfit;
   currentROI = dailyProfit > 0 ? Math.ceil(hardwareCost / dailyProfit) : null;
