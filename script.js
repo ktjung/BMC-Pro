@@ -119,9 +119,9 @@ async function calculate() {
 }
 
 // 계산 하기
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById("calculate").addEventListener('click', calculate);
-});
+    function calculate() {
+      console.log('계산하기 버튼이 클릭되었습니다!');
+}
 
 // 차트 그리기
 function drawChart(dailyProfit, hardwareCost, roi, dailyBTC = 0) {
