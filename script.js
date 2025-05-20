@@ -64,6 +64,7 @@ async function calculate() {
   const hours = parseFloat(document.getElementById("hours").value);
 
   const btcPrice = await fetchBTCPrice(); // 비트코인 시세
+  if (btcPrice === null) return; // 시세 불러오기 실패 시 계산 중단
   const exchangeRate = await fetchExchangeRate(); // 환율
   latestExchangeRate = exchangeRate; // 최신 환율 저장
   const blockRewardBTC = getBlockReward();
