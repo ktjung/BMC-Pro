@@ -80,7 +80,7 @@ async function calculate() {
   let dailyBTC = blockRewardBTC * blocksPerDay * (userHashrateHps / (networkHashrate * 1e12));
 
   // 풀 수수료 반영
-  const dailyBTCAfterFee = feePercent > 0 ? dailyBTC * (1 - feePercent / 100) : dailyBTC;
+  const dailyBTCAfterFee = feePercent > 0 ? dailyBTCWithoutFee * (1 - feePercent / 100) : dailyBTCWithoutFee;
 
   const revenueBeforeFee = dailyBTCAfterFee * btcPrice;
   const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * (feePercent / 100));
@@ -100,6 +100,7 @@ async function calculate() {
   // 결과 화면에 출력
   document.getElementById("btc_price").textContent = btcPrice.toFixed(2);
   document.getElementById("daily_btc").textContent = dailyBTCAfterFee.toFixed(8);
+  document.getElementById("daily_btc_no_fee").textContent = dailyBTCWithoutFee.toFixed(8);
   document.getElementById("monthly_btc").textContent = (dailyBTCAfterFee * 30).toFixed(8);
   document.getElementById("yearly_btc").textContent = (dailyBTCAfterFee * 365).toFixed(8);
 
