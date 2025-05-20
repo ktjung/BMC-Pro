@@ -174,14 +174,6 @@ async function calculate() {
 }
 
 
-  // 투자금액 회수 시점 문구 표시
-  if (roi) {
-    const recoveryText = document.getElementById("investmentRecoveryText");
-    recoveryText.style.display = "block";
-    recoveryText.innerHTML = 
-      `<span class="recovery-text" style='color:#ff4d4d;>*그래프 항목 터치 on/off)</span>`;
-}
-
 // 차트 그리기
 function drawChart(dailyProfit, hardwareCost, roi, dailyBTC = 0) {
   let labels = [1, 7, 30, 100, 200, 300, 365];
