@@ -239,19 +239,69 @@ function closeModal() {
   document.getElementById("exchangeModal").classList.remove("open");
 }
 
+
+// 정보 모달 열기
+function showInfoModal(event) {
+  const type = event.target.getAttribute('data-info'); // data-info 속성 값 가져오기
+  let infoText = "";
+
+  switch (type) {
+    case 'Instructions':
+        infoText = "<span class=\"info-text\" style=\"display:block;text-align:left;line-height:1.6;font-size:15px;\">각 입력란에는 기본값이 세팅되어있습니다.<br><br>" +
+                   "① 입력란에 각자에 맞게 값을 입력하세요<br>" +
+                   "② [계산하기] 버튼을 눌러서 $(USD) 수익을 확인하세요<br>" +
+                   "③ [환율적용] 버튼을 눌러서 KRW 수익을 확인하세요</span><br>" +
+                   "<span style=\"color:#ff4d4d;font-size:0.9em;\">*BTC시세, USD 환율은 자동으로 현재 시세를 반영합니다.</span><br>" +
+                   "<span class=\"info-text blue\" style='font-size: 0.9em;'>*각 항목별 ⓘ 버튼을 눌르면 설명이 나와있습니다.</span><br>" +
+                   "변동시 직접입력하세요.";          
+        break;
+    case 'block_reward':
+        infoText = "비트코인 블록 보상량 (현재 기본값: 3.125 BTC)<br><span style='color:#ff4d4d; font-size: 0.9em;'>*입력하지 않으면 자동으로 3.123 BTC로 적용됩니다.</span><br>변동시 직접입력하세요.";
+        break;
+    case 'btc_price':
+        infoText = "비트코인 시세 ($USD). <br>이 값에 따라 수익이 달라집니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*입력하지 않으면 자동으로 실시간 $시세가 적용됩니다.</span>";
+        break;
+    case 'usd_krw':
+        infoText = "1$ USD → KRW 환율 입력란입니다.<br>이를 통해 원화 수익을 계산할 수 있습니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*입력하지 않으면 자동으로 실시간 환율이 적용됩니다.</span>";
+        break;
+
+    case 'hashrate':
+        infoText = "채굴 장비의 해시레이트를 단위를 선택하고 <br> 실제 해시레이트 파워를 입력하세요. <br><span style='color:#ff4d4d; font-size: 0.9em;'>*입력하지 않으면 자동으로 670 TH/s로 적용됩니다.</span>";
+        break;
+    case 'electricity':
+        infoText = "채굴에 필요한 1시간의 <br>kw 전력 소비 비용을 의미합니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 0.036 $/kwh로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
+        break;
+    case 'power':
+        infoText = "장비가 채굴을 위해 사용하는<br>1시간의 kw 전기의 양입니다. <br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 0.019 kw/TH로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
+        break;
+    case 'hours':
+        infoText = "하루 중 채굴하는 시간을 설정합니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 24h로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
+        break;
+    case 'fee':
+        infoText = "채굴 풀에서 부과하는 수수료입니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 23.4%로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
+        break;
+    case 'hardware_cost':
+        infoText = "채굴에 필요한 장비에 투자한 금액입니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 $10,500(USD)로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
+        break;
+  }
+
+  document.getElementById("infoText").innerHTML = infoText;
+  document.getElementById("infoModal").classList.add("show");
+}
+
+// 정보 모달 닫기
+function closeInfoModal() {
+  document.getElementById("infoModal").classList.remove("show");
+}
+
 // 모든 info-icon에 클릭 이벤트 추가
 document.querySelectorAll('.info-icon').forEach(icon => {
   icon.addEventListener('click', showInfoModal);
 });
 
-// 다크 모드 토글
-document.getElementById("toggleDarkMode").addEventListener('click', function () {
-  document.body.classList.toggle('dark');
-});
-
-// 초기화 버튼
+// 초기화 버튼 기능
 document.getElementById("resetButton").addEventListener('click', function() {
-  // 필드들 초기화
+  // 모든 입력 필드를 초기화
   document.getElementById("hashrate").value = "";
   document.getElementById("power").value = "";
   document.getElementById("electricity").value = "";
@@ -261,4 +311,16 @@ document.getElementById("resetButton").addEventListener('click', function() {
   
   // 결과 화면 숨기기
   document.getElementById("output").classList.remove("show");
+  
+  // 차트 초기화
+  if (chart) chart.destroy();
 });
+
+// 계산 버튼 클릭 시
+document.getElementById("calculateButton").addEventListener('click', calculate);
+
+// 다크 모드 토글
+document.getElementById("toggleDarkMode").addEventListener('click', function () {
+  document.body.classList.toggle('dark');
+});
+
