@@ -104,6 +104,7 @@ async function calculate() {
 
   // 하루 이익 계산
   const dailyProfit = revenueAfterFee - dailyCost;
+  latestProfitUsd = dailyProfit;
 
   // ROI 계산 (하루 이익 / 투자금액)
   let currentROI = null;
