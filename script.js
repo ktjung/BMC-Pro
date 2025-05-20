@@ -134,7 +134,9 @@ async function calculate() {
   const dailyProfitInUSD = dailyProfitInBTC * btcPrice; // 일일 수익을 BTC에서 USD로 환산
 
   // 수익을 USD로 표시하고, 뒤에 BTC 값도 추가로 표시
-  document.getElementById("daily_profit_usd").textContent = `${dailyProfitInUSD.toFixed(2)} ($) / ${dailyProfitInBTC.toFixed(8)} (BTC)`;
+  document.getElementById("daily_profit_usd").textContent = 
+  `${dailyProfitInUSD.toFixed(2)} ($) / ${dailyProfitInBTC.toFixed(8)} (BTC)`;
+
 
 
 // ROI 그래프 그리기 (일일 순수익, 하드웨어 비용, ROI, 일일 채굴량)
