@@ -8,28 +8,46 @@ function getHashrateUnit() {
   return document.querySelector('input[name="hashrate_unit"]:checked').value;
 }
 
-// BTC 시세를 가져오는 함수
+// 비트코인 시세를 가져오는 함수
 async function fetchBTCPrice() {
   const customInput = document.getElementById("custom_btc_price");
   const customPrice = parseFloat(customInput.value);
-  
-  // 사용자가 이미 수동으로 입력했다면 그 값을 사용
+
+  // 사용자가 이미 수동으로 입력한 값이 있다면 그 값을 사용
   if (!isNaN(customPrice) && customPrice > 0) return customPrice;
 
+  // 캐시된 비트코인 시세와 마지막 업데이트 시간 가져오기
+  const cachedBTCPrice = localStorage.getItem("cached_btc_price");
+  const cachedTime = localStorage.getItem("cached_btc_time");
+
+  // 캐시가 존재하고, 캐시된 시세가 1시간 이내에 저장된 경우 캐시된 값 사용
+  if (cachedBTCPrice && cachedTime && (Date.now() - cachedTime) < 3600000) {
+    console.log("캐시된 비트코인 시세 사용");
+    return parseFloat(cachedBTCPrice);
+  }
+
   try {
-    // 실시간 시세 가져오기
+    // API에서 실시간 BTC 시세 가져오기
     const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
     const data = await res.json();
-    return data.bitcoin.usd;
+
+    // 새로운 시세를 localStorage에 저장
+    const newBTCPrice = data.bitcoin.usd;
+    localStorage.setItem("cached_btc_price", newBTCPrice);  // 비트코인 시세 저장
+    localStorage.setItem("cached_btc_time", Date.now());   // 마지막 업데이트 시간 저장
+
+    // 시세 반환
+    return newBTCPrice;
   } catch (e) {
-    // 실패 시 사용자에게 안내하고 수동 입력 유도
+    // 에러가 발생했을 때, 콘솔에 에러를 찍고 사용자에게 알림을 띄움
     console.error("BTC 시세 불러오기 실패:", e);
-    alert("BTC 시세를 불러오지 못했습니다. 아래 입력창에 가격을 직접 입력해주세요.");
+    alert("BTC 시세를 불러올 수 없습니다. 아래 가격 입력란에 수동으로 입력해주세요.");
     
-    // 수동 입력을 기다리도록 null 반환
+    // 사용자에게 수동 입력을 유도하기 위해 null 반환
     return null;
   }
 }
+
 
 // 환율을 가져오는 함수 (수동 입력 반영)
 async function fetchExchangeRate() {
