@@ -50,11 +50,6 @@ function getBlockReward() {
 }
 
 // 해시레이트 단위를 가져오는 함수
-function getHashrateUnit() {
-  return document.querySelector('input[name="hashrate_unit"]:checked').value;
-}
-
-// 계산을 시작하는 함수
 async function calculate() {
   const hashrate = parseFloat(document.getElementById("hashrate").value);
   const powerRate = parseFloat(document.getElementById("power").value);
@@ -64,6 +59,11 @@ async function calculate() {
   const hours = parseFloat(document.getElementById("hours").value);
 
   const btcPrice = await fetchBTCPrice(); // 비트코인 시세
+  if (btcPrice === null) {
+    alert("비트코인 시세를 불러올 수 없습니다. 다시 시도해주세요.");
+    return;
+  }
+
   const exchangeRate = await fetchExchangeRate(); // 환율
   latestExchangeRate = exchangeRate; // 최신 환율 저장
   const blockRewardBTC = getBlockReward();
@@ -84,46 +84,53 @@ async function calculate() {
   // 풀 수수료를 반영한 채굴량 계산
   const dailyBTCWithFee = dailyBTC * (1 - feePercent / 100);
 
-// 수익 계산 (BTC -> USD)
-const revenueBeforeFee = dailyBTCWithFee * btcPrice;
-const revenueAfterFee = revenueBeforeFee;
+  // 수익 계산 (BTC -> USD)
+  const revenueBeforeFee = dailyBTCWithFee * btcPrice;
+  const revenueAfterFee = revenueBeforeFee;
 
-// revenueInBTC 추가 (USD를 BTC로 변환)
-const revenueInBTC = dailyBTCWithFee;  // 이미 BTC 단위로 계산된 값입니다.
-const costInBTC = dailyCost / btcPrice; // 전기세를 BTC로 변환한 값
+  // 전기세 계산
+  const powerInKW = powerRate * userHashrate;
+  const dailyCost = powerInKW * hours * electricity;  // 전기세 계산
 
-// 전기세 계산
-const powerInKW = powerRate * userHashrate;
-const dailyCost = powerInKW * hours * electricity;
+  // revenueInBTC 추가 (USD를 BTC로 변환)
+  const revenueInBTC = dailyBTCWithFee;  // 이미 BTC 단위로 계산된 값입니다.
+  const costInBTC = dailyCost / btcPrice; // 전기세를 BTC로 변환한 값
 
-// 하루 이익 계산
-const dailyProfit = revenueAfterFee - dailyCost;
+  // 하루 이익 계산
+  const dailyProfit = revenueAfterFee - dailyCost;
 
-// 결과 출력
-document.getElementById("btc_price").textContent = btcPrice.toFixed(2);
-document.getElementById("daily_btc").textContent = dailyBTCWithFee.toFixed(8);
-document.getElementById("monthly_btc").textContent = (dailyBTCWithFee * 30).toFixed(8);
-document.getElementById("yearly_btc").textContent = (dailyBTCWithFee * 365).toFixed(8);
-document.getElementById("daily_rev").textContent = revenueAfterFee.toFixed(2);
-document.getElementById("daily_cost").textContent = dailyCost.toFixed(2);
-document.getElementById("daily_profit").textContent = dailyProfit.toFixed(2);
+  // ROI 계산 (하루 이익 / 투자금액)
+  let currentROI = null;
+  if (dailyProfit > 0 && hardwareCost > 0) {
+    currentROI = Math.ceil(hardwareCost / dailyProfit);
+  }
 
-// revenueInBTC와 costInBTC를 포함한 값 출력
-document.getElementById("daily_rev").textContent =
-  `${revenueAfterFee.toFixed(2)} (${revenueInBTC.toFixed(8)} BTC)`;
-document.getElementById("daily_cost").textContent =
-  `${dailyCost.toFixed(2)} (${costInBTC.toFixed(8)} BTC)`;
-document.getElementById("daily_profit").textContent =
-  `${dailyProfit.toFixed(2)} (${profitInBTC.toFixed(8)} BTC)`;
+  // 결과 출력
+  document.getElementById("btc_price").textContent = btcPrice.toFixed(2);
+  document.getElementById("daily_btc").textContent = dailyBTCWithFee.toFixed(8);
+  document.getElementById("monthly_btc").textContent = (dailyBTCWithFee * 30).toFixed(8);
+  document.getElementById("yearly_btc").textContent = (dailyBTCWithFee * 365).toFixed(8);
+  document.getElementById("daily_rev").textContent = revenueAfterFee.toFixed(2);
+  document.getElementById("daily_cost").textContent = dailyCost.toFixed(2);
+  document.getElementById("daily_profit").textContent = dailyProfit.toFixed(2);
 
-// ROI 출력
-document.getElementById("roi").textContent = currentROI ? currentROI : "수익 없음";
+  // BTC로 환산된 결과도 출력
+  document.getElementById("daily_rev").textContent =
+    `${revenueAfterFee.toFixed(2)} (${revenueInBTC.toFixed(8)} BTC)`;
+  document.getElementById("daily_cost").textContent =
+    `${dailyCost.toFixed(2)} (${costInBTC.toFixed(8)} BTC)`;
+  document.getElementById("daily_profit").textContent =
+    `${dailyProfit.toFixed(2)} (${(dailyProfit / btcPrice).toFixed(8)} BTC)`;
 
-// 결과 애니메이션
-document.getElementById("output").classList.add("show");
+  document.getElementById("roi").textContent = currentROI ? currentROI : "수익 없음";
 
-drawChart(dailyProfit, hardwareCost, currentROI, dailyBTCWithFee);
+  // 차트 그리기
+  drawChart(dailyProfit, hardwareCost, currentROI, dailyBTCWithFee);
+
+  // 결과 애니메이션
+  document.getElementById("output").classList.add("show");
 }
+
 
 
 // 차트 그리기
