@@ -242,7 +242,10 @@ async function openModal() {
 function closeModal() {
   document.getElementById("exchangeModal").classList.remove("open");
 }
-
+// 다크 모드 토글
+document.getElementById("darkToggle").addEventListener("change", function () {
+  document.body.classList.toggle("dark-mode", this.checked);
+});
 
 // 정보 모달 열기
 function showInfoModal(event) {
@@ -306,7 +309,4 @@ document.querySelectorAll('.info-icon').forEach(icon => {
 // 계산 버튼 클릭 시
 document.getElementById("calculateButton").addEventListener('click', calculate);
 
-// 다크 모드 토글
-document.getElementById("darkToggle").addEventListener("change", function () {
-  document.body.classList.toggle("dark-mode", this.checked);
-});
+
