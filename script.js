@@ -174,7 +174,6 @@ if (chart) {
   chart.destroy();
 }
 
-let ctx = document.getElementById("profitChart").getContext("2d");
 if (!ctx) {
   console.error("차트를 그릴 수 없습니다. 'profitChart' 요소가 존재하지 않습니다.");
   return;
