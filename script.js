@@ -110,10 +110,6 @@ async function calculate() {
   drawChart(dailyProfit, hardwareCost, currentROI, dailyBTCAfterFee);
 }
 
-// 계산 하기
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById("calculate").addEventListener('click', calculate);
-});
 
 // 차트 그리기
 function drawChart(dailyProfit, hardwareCost, roi, dailyBTC = 0) {
