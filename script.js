@@ -87,7 +87,7 @@ async function calculate() {
   document.getElementById("yearly_btc").textContent = (dailyBTC * 365).toFixed(8);
   document.getElementById("daily_rev").textContent = `${revenueAfterFee.toFixed(2)} (${dailyBTC.toFixed(8)} BTC)`;
   document.getElementById("daily_cost").textContent = `${dailyCost.toFixed(2)} (${(dailyCost / btcPrice).toFixed(8)} BTC)`;
-  document.getElementById("daily_profit").textContent = `${dailyProfit.toFixed(2)} (${dailyBTC.toFixed(8)} BTC)`;
+  document.getElementById("daily_profit").textContent = `${dailyProfit.toFixed(2)} (${profitInBTC.toFixed(8)} BTC)`;
   document.getElementById("roi").textContent = currentROI ? currentROI : "수익 없음";
 
   document.getElementById("output").classList.add("show");
