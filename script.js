@@ -119,7 +119,7 @@ async function calculate() {
 
 // 계산 하기
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById("calculateButton").addEventListener('click', calculate);
+  document.getElementById("calculate").addEventListener('click', calculate);
 });
 
 // 차트 그리기
