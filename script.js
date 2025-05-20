@@ -173,6 +173,11 @@ async function calculate() {
   document.getElementById("output").classList.add("show");
 }
 
+// 추가된 안내 문구 표시
+const hintText = document.getElementById("toggle-hint");
+hintText.style.display = "block"; 
+hintText.innerHTML = "그래프 항목을 터치하면 on/off 됩니다.";
+
 
 // 차트 그리기
 function drawChart(dailyProfit, hardwareCost, roi, dailyBTC = 0) {
