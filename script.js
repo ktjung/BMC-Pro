@@ -109,27 +109,33 @@ async function calculate() {
   const profitInBTC = btcPrice > 0 ? dailyProfit / btcPrice : 0;  
 
   // 결과 화면에 출력
-  document.getElementById("btc_price").textContent = btcPrice.toFixed(2); 
-  document.getElementById("daily_btc").textContent = dailyBTC.toFixed(8);  
-  document.getElementById("monthly_btc").textContent = (dailyBTC * 30).toFixed(8);  
-  document.getElementById("yearly_btc").textContent = (dailyBTC * 365).toFixed(8);  
+  document.getElementById("btc_price").textContent = btcPrice.toFixed(2);
+  document.getElementById("daily_btc").textContent = dailyBTC.toFixed(8);
+  document.getElementById("monthly_btc").textContent = (dailyBTC * 30).toFixed(8);
+  document.getElementById("yearly_btc").textContent = (dailyBTC * 365).toFixed(8);
 
-  // 일일 수익 표시 - (BTC 수익 및 USD 수익)
-  document.getElementById("daily_rev").textContent =
-  `${revenueAfterFee.toFixed(2)} (${revenueInBTC.toFixed(8)} BTC)`;  
-  document.getElementById("daily_cost").textContent =
-  `${dailyCost.toFixed(2)} (${costInBTC.toFixed(8)} BTC)`;  
-  document.getElementById("daily_profit").textContent =
-  `${dailyProfit.toFixed(2)} (${profitInBTC.toFixed(8)} BTC)`;  
+  // 일일 수익 (전기요금 -전)을 업데이트
+  document.getElementById("daily_rev").textContent = `${revenueAfterFee.toFixed(2)} ($)`;
 
+  // 전기 요금
+  document.getElementById("daily_cost").textContent = `${dailyCost.toFixed(2)} ($)`;
+
+  // 일일 순이익
+  document.getElementById("daily_profit").textContent = `${dailyProfit.toFixed(2)} ($)`;
+
+  // ROI
   document.getElementById("roi").textContent = currentROI ? currentROI : "수익 없음";  // 투자 회수 기간
 
-  document.getElementById("output").classList.add("show");  // 결과 화면 보이기
+  // 결과 화면 보이기
+  document.getElementById("output").classList.add("show");
 
   // 일일 수익(BTC)로 환산하여, 그 값을 USD로 표시
   const dailyProfitInBTC = profitInBTC; // dailyProfit을 profitInBTC로 맞춰줍니다.
   const dailyProfitInUSD = dailyProfitInBTC * btcPrice; // 일일 수익을 BTC에서 USD로 환산
-  document.getElementById("daily_profit_usd").textContent = `${dailyProfitInUSD.toFixed(2)} ($)`; // 수익을 USD로 출력
+
+  // 수익을 USD로 표시하고, 뒤에 BTC 값도 추가로 표시
+  document.getElementById("daily_profit_usd").textContent = `${dailyProfitInUSD.toFixed(2)} ($) / ${dailyProfitInBTC.toFixed(8)} (BTC)`;
+
 
 // ROI 그래프 그리기 (일일 순수익, 하드웨어 비용, ROI, 일일 채굴량)
 drawChart(dailyProfit, hardwareCost, currentROI, dailyBTC);
