@@ -258,7 +258,7 @@ if (roi) {
             callback: value => `$${value.toLocaleString()}`
           },
         grid: {
-        drawOnChartArea: true 
+          drawOnChartArea: true 
           }
         },
         y1: {
@@ -268,7 +268,7 @@ if (roi) {
             callback: value => `${value} BTC`
           },
         grid: {
-        drawOnChartArea: false
+          drawOnChartArea: false
           }
         }
       }
