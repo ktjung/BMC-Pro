@@ -176,11 +176,6 @@ async function calculate() {
 
   // 결과 애니메이션
   document.getElementById("output").classList.add("show");
-  
-  // 추가된 안내 문구 표시
-  const hintText = document.getElementById("toggle-hint");
-  hintText.style.display = "block";  // "toggle-hint" 요소를 보여줍니다.
-  hintText.innerHTML = "그래프 항목을 터치하면 상세 정보를 확인할 수 있습니다.";  // 문구 설정
 }
 
 
