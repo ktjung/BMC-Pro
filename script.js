@@ -127,7 +127,7 @@ async function calculate() {
 
 // ROI 그래프 그리기 (일일 순수익, 하드웨어 비용, ROI, 일일 채굴량)
 drawChart(dailyProfit, hardwareCost, currentROI, dailyBTC);
-
+}
 
 
 // 차트 그리기
