@@ -268,6 +268,18 @@
       color: #42a5f5; 
     }
 
+    #toggle-hint {
+      display: none; /* 처음에는 숨겨둡니다 */
+      font-size: 14px;
+      color: #333; /* 기본은 어두운 회색 */
+
+  /* 다크 모드일 경우 텍스트 색상을 화이트로 변경 */
+    @media (prefers-color-scheme: dark) {
+      color: #fff; /* 다크 모드에서는 화이트 텍스트 */
+      }
+    }
+
+
     .recovery-text {
       color: #222; 
     }
