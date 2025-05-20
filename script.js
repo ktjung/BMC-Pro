@@ -59,7 +59,7 @@ async function calculate() {
   const hashrate = parseFloat(document.getElementById("hashrate").value);
   const powerRate = parseFloat(document.getElementById("power").value);
   const electricity = parseFloat(document.getElementById("electricity").value);
-  const feePercent = parseFloat(document.getElementById("fee").value);
+  const feePercent = parseFloat(document.getElementById("fee").value) || 1; // 풀 수수료 기본값 1%
   const hardwareCost = parseFloat(document.getElementById("hardware_cost").value);
   const hours = parseFloat(document.getElementById("hours").value);
 
@@ -78,10 +78,14 @@ async function calculate() {
 
   const userHashrateHps = userHashrate * 1e12;
   let dailyBTC = blockRewardBTC * blocksPerDay * (userHashrateHps / (networkHashrate * 1e12));
-  dailyBTC *= (1 - feePercent / 100);
 
-  const revenueBeforeFee = dailyBTC * btcPrice;
-  const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * feePercent / 100); 
+  // 풀 수수료 반영
+  const feeRate = feePercent / 100;
+  const dailyBTCAfterFee = dailyBTC * (1 - feeRate); // 수수료 반영 후 채굴량
+
+  const revenueBeforeFee = dailyBTCAfterFee * btcPrice;
+  const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * feeRate);
+
   const powerInKW = powerRate * userHashrate;
   const dailyCost = powerInKW * hours * electricity;
   const dailyProfit = revenueAfterFee - dailyCost;
@@ -90,15 +94,15 @@ async function calculate() {
   currentROI = dailyProfit > 0 ? Math.ceil(hardwareCost / dailyProfit) : null;
 
   // BTC 환산 값
-  const revenueInBTC = btcPrice > 0 ? revenueAfterFee / btcPrice : 0;
+  const revenueInBTC = dailyBTCAfterFee;
   const costInBTC = btcPrice > 0 ? dailyCost / btcPrice : 0;
   const profitInBTC = btcPrice > 0 ? dailyProfit / btcPrice : 0;
 
   // 결과 화면에 출력
   document.getElementById("btc_price").textContent = btcPrice.toFixed(2);
-  document.getElementById("daily_btc").textContent = dailyBTC.toFixed(8);
-  document.getElementById("monthly_btc").textContent = (dailyBTC * 30).toFixed(8);
-  document.getElementById("yearly_btc").textContent = (dailyBTC * 365).toFixed(8);
+  document.getElementById("daily_btc").textContent = dailyBTCAfterFee.toFixed(8);
+  document.getElementById("monthly_btc").textContent = (dailyBTCAfterFee * 30).toFixed(8);
+  document.getElementById("yearly_btc").textContent = (dailyBTCAfterFee * 365).toFixed(8);
 
   document.getElementById("daily_rev").textContent =
     `${revenueAfterFee.toFixed(2)} (${revenueInBTC.toFixed(8)} BTC)`;
@@ -111,7 +115,7 @@ async function calculate() {
 
   document.getElementById("output").classList.add("show");
 
-  drawChart(dailyProfit, hardwareCost, currentROI, dailyBTC);
+  drawChart(dailyProfit, hardwareCost, currentROI, dailyBTCAfterFee);
 }
 
 // 차트 그리기
