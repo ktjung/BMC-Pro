@@ -78,7 +78,11 @@ async function calculate() {
     return;
   }
 
-  const exchangeRate = await fetchExchangeRate(); // 환율
+  const exchangeRate = await fetchExchangeRate();
+  if (exchangeRate === null) {
+    return; // 환율 없으면 계산 중단
+  }
+
   latestExchangeRate = exchangeRate; // 최신 환율 저장
   const blockRewardBTC = getBlockReward();
   const blocksPerDay = 144;
