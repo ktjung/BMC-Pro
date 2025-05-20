@@ -55,7 +55,7 @@ function getBlockReward() {
   return !isNaN(customBlock) && customBlock > 0 ? customBlock : 3.125;
 }
 
-// 해시레이트 단위를 가져오는 함수
+// 계산을 시작하는 함수
 async function calculate() {
   const hashrate = parseFloat(document.getElementById("hashrate").value);
   const powerRate = parseFloat(document.getElementById("power").value);
