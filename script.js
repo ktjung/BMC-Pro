@@ -86,6 +86,11 @@ function getBlockReward() {
   return !isNaN(customBlock) && customBlock > 0 ? customBlock : 3.125;
 }
 
+// 추가된 안내 문구 표시
+const hintText = document.getElementById("toggle-hint");
+hintText.style.display = "block"; 
+hintText.innerHTML = "그래프 항목을 터치하면 on/off 됩니다.";
+
 // 계산을 시작하는 함수
 async function calculate() {
   const hashrate = parseFloat(document.getElementById("hashrate").value);
@@ -171,12 +176,12 @@ async function calculate() {
 
   // 결과 애니메이션
   document.getElementById("output").classList.add("show");
+  
+  // 추가된 안내 문구 표시
+  const hintText = document.getElementById("toggle-hint");
+  hintText.style.display = "block";  // "toggle-hint" 요소를 보여줍니다.
+  hintText.innerHTML = "그래프 항목을 터치하면 상세 정보를 확인할 수 있습니다.";  // 문구 설정
 }
-
-// 추가된 안내 문구 표시
-const hintText = document.getElementById("toggle-hint");
-hintText.style.display = "block"; 
-hintText.innerHTML = "그래프 항목을 터치하면 on/off 됩니다.";
 
 
 // 차트 그리기
