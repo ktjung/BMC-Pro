@@ -75,10 +75,11 @@ async function calculate() {
   let dailyBTC = totalNetworkDailyBTC * (userHashrateHps / (networkHashrate * 1e12));
 
   // 수수료 반영
-  dailyBTC *= (1 - feePercent / 100);  // 수수료 반영된 채굴 수익
+  dailyBTC *= (1 - feePercent / 100); 
 
-  const revenueBeforeFee = dailyBTC * btcPrice;
-  const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * feePercent / 100); 
+  const revenueBeforeFee = dailyBTC * btcPrice; 
+  const revenueAfterFee = revenueBeforeFee; 
+
 
   const powerInKW = powerRate * userHashrate;
   const dailyCost = powerInKW * hours * electricity;
