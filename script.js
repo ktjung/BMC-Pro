@@ -59,8 +59,7 @@ async function calculate() {
   const hashrate = parseFloat(document.getElementById("hashrate").value);
   const powerRate = parseFloat(document.getElementById("power").value);
   const electricity = parseFloat(document.getElementById("electricity").value);
-  const feePercent = parseFloat(document.getElementById("fee").value) || 1; // 풀 수수료 기본값 1%
-  const hardwareCost = parseFloat(document.getElementById("hardware_cost").value);
+  const feePercent = parseFloat(document.getElementById("fee").value);
   const hours = parseFloat(document.getElementById("hours").value);
 
   const btcPrice = await fetchBTCPrice(); // 비트코인 시세
@@ -77,13 +76,12 @@ async function calculate() {
   if (unit === "MH/s") userHashrate *= 0.000001;
 
   const userHashrateHps = userHashrate * 1e12;
-  let dailyBTC = blockRewardBTC * blocksPerDay * (userHashrateHps / (networkHashrate * 1e12));
 
-  // 풀 수수료 반영
-  const dailyBTCAfterFee = feePercent > 0 ? dailyBTCWithoutFee * (1 - feePercent / 100) : dailyBTCWithoutFee;
+  // 채굴량 계산
+  let dailyBTC = totalNetworkDailyBTC * (userHashrateHps / (networkHashrate * 1e12));
 
-  const revenueBeforeFee = dailyBTCAfterFee * btcPrice;
-  const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * (feePercent / 100));
+  // 풀 수수료를 반영한 채굴량 계산
+  const dailyBTCWithFee = dailyBTC * (1 - feePercent / 100);
 
   const powerInKW = powerRate * userHashrate;
   const dailyCost = powerInKW * hours * electricity;
