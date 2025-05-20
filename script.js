@@ -5,16 +5,24 @@ let currentROI = null;
 
 // BTC 시세를 가져오는 함수
 async function fetchBTCPrice() {
-  const customPrice = parseFloat(document.getElementById("custom_btc_price").value);
+  const customInput = document.getElementById("custom_btc_price");
+  const customPrice = parseFloat(customInput.value);
+  
+  // 사용자가 이미 수동으로 입력했다면 그 값을 사용
   if (!isNaN(customPrice) && customPrice > 0) return customPrice;
 
   try {
+    // 실시간 시세 가져오기
     const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
     const data = await res.json();
     return data.bitcoin.usd;
   } catch (e) {
+    // 실패 시 사용자에게 안내하고 수동 입력 유도
     console.error("BTC 시세 불러오기 실패:", e);
-    return 60000; // fallback 값
+    alert("BTC 시세를 불러오지 못했습니다. 아래 입력창에 가격을 직접 입력해주세요.");
+    
+    // 수동 입력을 기다리도록 null 반환
+    return null;
   }
 }
 
