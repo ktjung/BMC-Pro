@@ -23,6 +23,7 @@ async function fetchBTCPrice() {
   // 캐시가 존재하고, 캐시된 시세가 1시간 이내에 저장된 경우 캐시된 값 사용
   if (cachedBTCPrice && cachedTime && (Date.now() - cachedTime) < 3600000) {
     console.log("캐시된 비트코인 시세 사용");
+    customInput.value = parseFloat(cachedBTCPrice).toFixed(8);  // 캐시된 시세 자동 채워넣기
     return parseFloat(cachedBTCPrice);
   }
 
@@ -50,6 +51,7 @@ async function fetchBTCPrice() {
     return null;
   }
 }
+
 
 
 // 환율을 가져오는 함수 (수동 입력 반영)
