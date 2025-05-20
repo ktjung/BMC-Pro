@@ -6,25 +6,17 @@ let currentROI = null;
 // BTC 시세를 가져오는 함수
 async function fetchBTCPrice() {
   const customPrice = parseFloat(document.getElementById("custom_btc_price").value);
-  
-  // 수동 입력된 가격이 있을 경우 이를 반환
-  if (!isNaN(customPrice) && customPrice > 0) {
-    return customPrice;
-  }
+  if (!isNaN(customPrice) && customPrice > 0) return customPrice;
 
   try {
-    // CoinGecko API로 BTC 시세 가져오기
     const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
     const data = await res.json();
     return data.bitcoin.usd;
   } catch (e) {
     console.error("BTC 시세 불러오기 실패:", e);
-    // 시세 불러오기 실패 시 알럿 창 띄우기
-    alert("시세를 불러오지 못했습니다. 현재 시세를 입력해주세요.");
-    return null;
+    return 60000; // fallback 값
   }
 }
-
 
 // 환율을 가져오는 함수 (수동 입력 반영)
 async function fetchExchangeRate() {
@@ -64,14 +56,12 @@ async function calculate() {
   const hours = parseFloat(document.getElementById("hours").value);
 
   const btcPrice = await fetchBTCPrice(); // 비트코인 시세
-  if (btcPrice === null) return; // 시세 불러오기 실패 시 계산 중단
   const exchangeRate = await fetchExchangeRate(); // 환율
   latestExchangeRate = exchangeRate; // 최신 환율 저장
   const blockRewardBTC = getBlockReward();
-  const blocksPerDay = 144;  // 하루 블록 수 (24시간 기준)
-
+  const blocksPerDay = 144;
   const totalNetworkDailyBTC = 462;  // 하루 전체 네트워크 채굴량 (450 + 거래 수수료 12개)
-  const networkHashrate = 867000000;  // 전체 네트워크 해시레이트 (867 EH/s)
+  const networkHashrate = 867000000; // TH/s 기준
 
   let userHashrate = hashrate;
   const unit = getHashrateUnit();
@@ -79,34 +69,22 @@ async function calculate() {
   if (unit === "MH/s") userHashrate *= 0.000001;
 
   const userHashrateHps = userHashrate * 1e12;
+  let dailyBTC = blockRewardBTC * blocksPerDay * (userHashrateHps / (networkHashrate * 1e12));
+  dailyBTC *= (1 - feePercent / 100);
 
-  // 사용자 해시레이트와 네트워크 해시레이트 비율로 채굴량 계산
-  let dailyBTC = totalNetworkDailyBTC * (userHashrateHps / (networkHashrate * 1e12));
-
-  // 수수료 반영
-  dailyBTC *= (1 - feePercent / 100); 
-
-  // 일일 채굴량에 맞춰 수익 계산 (수수료 반영 후)
-  let revenueBeforeFee = dailyBTC * btcPrice;
-
-  // 수수료 반영된 수익 계산
-  let revenueAfterFee = revenueBeforeFee * (1 - feePercent / 100);
-
-  // 전기 요금 계산
+  const revenueBeforeFee = dailyBTC * btcPrice;
+  const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * feePercent / 100); 
   const powerInKW = powerRate * userHashrate;
   const dailyCost = powerInKW * hours * electricity;
-
-  // 실제 순이익 계산
   const dailyProfit = revenueAfterFee - dailyCost;
 
-  // 최신 수익과 ROI 계산
   latestProfitUsd = dailyProfit;
   currentROI = dailyProfit > 0 ? Math.ceil(hardwareCost / dailyProfit) : null;
 
-  // BTC 환산 값 계산
-  const revenueInBTC = btcPrice > 0 ? revenueAfterFee / btcPrice : 0;  
-  const costInBTC = btcPrice > 0 ? dailyCost / btcPrice : 0;  
-  const profitInBTC = btcPrice > 0 ? dailyProfit / btcPrice : 0;  
+  // BTC 환산 값
+  const revenueInBTC = btcPrice > 0 ? revenueAfterFee / btcPrice : 0;
+  const costInBTC = btcPrice > 0 ? dailyCost / btcPrice : 0;
+  const profitInBTC = btcPrice > 0 ? dailyProfit / btcPrice : 0;
 
   // 결과 화면에 출력
   document.getElementById("btc_price").textContent = btcPrice.toFixed(2);
@@ -114,33 +92,18 @@ async function calculate() {
   document.getElementById("monthly_btc").textContent = (dailyBTC * 30).toFixed(8);
   document.getElementById("yearly_btc").textContent = (dailyBTC * 365).toFixed(8);
 
-  // 일일 수익 (전기요금 -전)을 업데이트
-  document.getElementById("daily_rev").textContent = `${revenueAfterFee.toFixed(2)} ($)`;
+  document.getElementById("daily_rev").textContent =
+    `${revenueAfterFee.toFixed(2)} (${revenueInBTC.toFixed(8)} BTC)`;
+  document.getElementById("daily_cost").textContent =
+    `${dailyCost.toFixed(2)} (${costInBTC.toFixed(8)} BTC)`;
+  document.getElementById("daily_profit").textContent =
+    `${dailyProfit.toFixed(2)} (${profitInBTC.toFixed(8)} BTC)`;
 
-  // 전기 요금
-  document.getElementById("daily_cost").textContent = `${dailyCost.toFixed(2)} ($)`;
+  document.getElementById("roi").textContent = currentROI ? currentROI : "수익 없음";
 
-  // 일일 순이익
-  document.getElementById("daily_profit").textContent = `${dailyProfit.toFixed(2)} ($)`;
-
-  // ROI
-  document.getElementById("roi").textContent = currentROI ? currentROI : "수익 없음";  // 투자 회수 기간
-
-  // 결과 화면 보이기
   document.getElementById("output").classList.add("show");
 
-  // 일일 수익(BTC)로 환산하여, 그 값을 USD로 표시
-  const dailyProfitInBTC = profitInBTC; // dailyProfit을 profitInBTC로 맞춰줍니다.
-  const dailyProfitInUSD = dailyProfitInBTC * btcPrice; // 일일 수익을 BTC에서 USD로 환산
-
-  // 수익을 USD로 표시하고, 뒤에 BTC 값도 추가로 표시
-  document.getElementById("daily_profit_usd").textContent = 
-  `${dailyProfitInUSD.toFixed(2)} ($) / ${dailyProfitInBTC.toFixed(8)} (BTC)`;
-
-
-
-// ROI 그래프 그리기 (일일 순수익, 하드웨어 비용, ROI, 일일 채굴량)
-drawChart(dailyProfit, hardwareCost, currentROI, dailyBTC);
+  drawChart(dailyProfit, hardwareCost, currentROI, dailyBTC);
 }
 
 
@@ -169,15 +132,7 @@ if (roi) {
   });
 
   const ctx = document.getElementById("profitChart").getContext("2d");
-// 차트를 그리기 전에 차트가 이미 존재하는지 확인하고, 존재하면 삭제
-if (chart) {
-  chart.destroy();
-}
-
-if (!ctx) {
-  console.error("차트를 그릴 수 없습니다. 'profitChart' 요소가 존재하지 않습니다.");
-  return;
-}
+  if (chart) chart.destroy();
 
 chart = new Chart(ctx, {
   type: "bar",
@@ -209,49 +164,49 @@ chart = new Chart(ctx, {
       }
     ]
   },
-  options: {
-    responsive: true,
-    plugins: {
-      tooltip: {
-        callbacks: {
-          label: function(tooltipItem) {
-            const datasetLabel = tooltipItem.dataset.label || '';
-            const value = tooltipItem.raw;
-            if (datasetLabel.includes("BTC")) {
-              return `${datasetLabel}: ${parseFloat(value).toFixed(8)} BTC`;
-            } else {
-              return `${datasetLabel}: $${parseFloat(value).toFixed(2)}`;
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(tooltipItem) {
+              const datasetLabel = tooltipItem.dataset.label || '';
+              const value = tooltipItem.raw;
+
+              if (datasetLabel.includes("BTC")) {
+                return `${datasetLabel}: ${parseFloat(value).toFixed(8)} BTC`;
+              } else {
+                return `${datasetLabel}: $${parseFloat(value).toFixed(2)}`;
+              }
             }
           }
-        }
+        },
+        legend: { position: "top" }
       },
-      legend: { position: "top" }
-    },
-    scales: {
-      y: {
-        ticks: {
-          beginAtZero: true,
-          callback: value => `$${value}`
-        }
-      },
-      y1: {
-        position: "right",
-        type: 'linear',
-        ticks: {
-          callback: value => `${value} BTC`
+      scales: {
+        y: {
+          ticks: {
+            beginAtZero: true,
+            callback: value => `$${value}`
+          }
+        },
+        y1: {
+          position: "right",
+          type: 'linear',
+          ticks: {
+            callback: value => `${value} BTC`
+          }
         }
       }
     }
-  }
-});
-
+  });
   
 // 투자금액 회수 시점 문구 표시
 if (roi) {
   const recoveryText = document.getElementById("investmentRecoveryText");
   recoveryText.style.display = "block";
   recoveryText.innerHTML = `
-    <span class="green-circle" style="text-align: right;">■</span>
+    <span class="green-circle">■</span>
     <span class="recovery-text">투자금액을 회수하는 시점은 <strong>${roi}일</strong>입니다.</span>
   `;
 }
