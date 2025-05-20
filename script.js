@@ -323,8 +323,12 @@ document.getElementById("resetButton").addEventListener('click', function() {
 // 계산 버튼 클릭 시
 document.getElementById("calculateButton").addEventListener('click', calculate);
 
-// 다크 모드 토글
-document.getElementById("toggleDarkMode").addEventListener('click', function () {
-  document.body.classList.toggle('dark');
+// 다크 모드 토글 기능
+document.getElementById("darkToggle").addEventListener('change', function () {
+  if (this.checked) {
+    document.body.classList.add('dark'); // 체크된 상태 (다크 모드)
+  } else {
+    document.body.classList.remove('dark'); // 체크 해제 상태 (일반 모드)
+  }
 });
 
