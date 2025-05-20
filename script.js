@@ -47,6 +47,7 @@ function getHashrateUnit() {
 }
 
 // 계산을 시작하는 함수
+// 계산을 시작하는 함수
 async function calculate() {
   const hashrate = parseFloat(document.getElementById("hashrate").value);
   const powerRate = parseFloat(document.getElementById("power").value);
@@ -80,20 +81,31 @@ async function calculate() {
   latestProfitUsd = dailyProfit;
   currentROI = dailyProfit > 0 ? Math.ceil(hardwareCost / dailyProfit) : null;
 
+  // BTC 환산 값
+  const revenueInBTC = btcPrice > 0 ? revenueAfterFee / btcPrice : 0;
+  const costInBTC = btcPrice > 0 ? dailyCost / btcPrice : 0;
+  const profitInBTC = btcPrice > 0 ? dailyProfit / btcPrice : 0;
+
   // 결과 화면에 출력
   document.getElementById("btc_price").textContent = btcPrice.toFixed(2);
   document.getElementById("daily_btc").textContent = dailyBTC.toFixed(8);
   document.getElementById("monthly_btc").textContent = (dailyBTC * 30).toFixed(8);
   document.getElementById("yearly_btc").textContent = (dailyBTC * 365).toFixed(8);
-  document.getElementById("daily_rev").textContent = `${revenueAfterFee.toFixed(2)} (${dailyBTC.toFixed(8)} BTC)`;
-  document.getElementById("daily_cost").textContent = `${dailyCost.toFixed(2)} (${(dailyCost / btcPrice).toFixed(8)} BTC)`;
-  document.getElementById("daily_profit").textContent = `${dailyProfit.toFixed(2)} (${profitInBTC.toFixed(8)} BTC)`;
+
+  document.getElementById("daily_rev").textContent =
+    `${revenueAfterFee.toFixed(2)} (${revenueInBTC.toFixed(8)} BTC)`;
+  document.getElementById("daily_cost").textContent =
+    `${dailyCost.toFixed(2)} (${costInBTC.toFixed(8)} BTC)`;
+  document.getElementById("daily_profit").textContent =
+    `${dailyProfit.toFixed(2)} (${profitInBTC.toFixed(8)} BTC)`;
+
   document.getElementById("roi").textContent = currentROI ? currentROI : "수익 없음";
 
   document.getElementById("output").classList.add("show");
 
   drawChart(dailyProfit, hardwareCost, currentROI, dailyBTC);
 }
+
 
 // 차트 그리기
 function drawChart(dailyProfit, hardwareCost, roi, dailyBTC = 0) {
