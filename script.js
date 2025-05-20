@@ -169,7 +169,16 @@ if (roi) {
   });
 
   const ctx = document.getElementById("profitChart").getContext("2d");
-  if (chart) chart.destroy();
+// 차트를 그리기 전에 차트가 이미 존재하는지 확인하고, 존재하면 삭제
+if (chart) {
+  chart.destroy();
+}
+
+let ctx = document.getElementById("profitChart").getContext("2d");
+if (!ctx) {
+  console.error("차트를 그릴 수 없습니다. 'profitChart' 요소가 존재하지 않습니다.");
+  return;
+}
 
 chart = new Chart(ctx, {
   type: "bar",
@@ -201,42 +210,42 @@ chart = new Chart(ctx, {
       }
     ]
   },
-    options: {
-      responsive: true,
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: function(tooltipItem) {
-              const datasetLabel = tooltipItem.dataset.label || '';
-              const value = tooltipItem.raw;
-
-              if (datasetLabel.includes("BTC")) {
-                return `${datasetLabel}: ${parseFloat(value).toFixed(8)} BTC`;
-              } else {
-                return `${datasetLabel}: $${parseFloat(value).toFixed(2)}`;
-              }
+  options: {
+    responsive: true,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function(tooltipItem) {
+            const datasetLabel = tooltipItem.dataset.label || '';
+            const value = tooltipItem.raw;
+            if (datasetLabel.includes("BTC")) {
+              return `${datasetLabel}: ${parseFloat(value).toFixed(8)} BTC`;
+            } else {
+              return `${datasetLabel}: $${parseFloat(value).toFixed(2)}`;
             }
           }
-        },
-        legend: { position: "top" }
+        }
       },
-      scales: {
-        y: {
-          ticks: {
-            beginAtZero: true,
-            callback: value => `$${value}`
-          }
-        },
-        y1: {
-          position: "right",
-          type: 'linear',
-          ticks: {
-            callback: value => `${value} BTC`
-          }
+      legend: { position: "top" }
+    },
+    scales: {
+      y: {
+        ticks: {
+          beginAtZero: true,
+          callback: value => `$${value}`
+        }
+      },
+      y1: {
+        position: "right",
+        type: 'linear',
+        ticks: {
+          callback: value => `${value} BTC`
         }
       }
     }
-  });
+  }
+});
+
   
 // 투자금액 회수 시점 문구 표시
 if (roi) {
