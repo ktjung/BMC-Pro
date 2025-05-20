@@ -53,7 +53,6 @@ async function fetchBTCPrice() {
 }
 
 
-
 // 환율을 가져오는 함수 (수동 입력 반영)
 async function fetchExchangeRate() {
   const customRate = parseFloat(document.getElementById("custom_usd_krw").value);
@@ -72,7 +71,7 @@ async function fetchExchangeRate() {
   } catch (e) {
     console.error("환율 불러오기 실패:", e);
 
-    // USD 시세 수동 입력을 유도
+    // ✅ BTC 시세처럼 수동 입력을 유도
     alert("환율 정보를 불러오지 못했습니다. 아래 환율 입력란에 직접 입력해주세요.");
 
     return null; // 여기서 강제로 null 반환
@@ -85,11 +84,6 @@ function getBlockReward() {
   const customBlock = parseFloat(document.getElementById("custom_block_reward").value);
   return !isNaN(customBlock) && customBlock > 0 ? customBlock : 3.125;
 }
-
-// 추가된 안내 문구 표시
-const hintText = document.getElementById("toggle-hint");
-hintText.style.display = "block"; 
-hintText.innerHTML = "그래프 항목을 터치하면 on/off 됩니다.";
 
 // 계산을 시작하는 함수
 async function calculate() {
@@ -153,7 +147,7 @@ async function calculate() {
   }
 
   // 결과 출력
-  document.getElementById("btc_price").textContent = btcPrice.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  document.getElementById("btc_price").textContent = btcPrice.toFixed(2);
   document.getElementById("daily_btc").textContent = dailyBTCWithFee.toFixed(8);
   document.getElementById("monthly_btc").textContent = (dailyBTCWithFee * 30).toFixed(8);
   document.getElementById("yearly_btc").textContent = (dailyBTCWithFee * 365).toFixed(8);
@@ -177,6 +171,8 @@ async function calculate() {
   // 결과 애니메이션
   document.getElementById("output").classList.add("show");
 }
+
+
 
 // 차트 그리기
 function drawChart(dailyProfit, hardwareCost, roi, dailyBTC = 0) {
@@ -258,10 +254,7 @@ if (roi) {
         y: {
           ticks: {
             beginAtZero: true,
-            callback: value => `$${value.toLocaleString()}`
-          },
-        grid: {
-          drawOnChartArea: true 
+            callback: value => `$${value}`
           }
         },
         y1: {
@@ -269,9 +262,6 @@ if (roi) {
           type: 'linear',
           ticks: {
             callback: value => `${value} BTC`
-          },
-        grid: {
-          drawOnChartArea: false
           }
         }
       }
@@ -371,6 +361,5 @@ function closeInfoModal() {
 document.querySelectorAll('.info-icon').forEach(icon => {
   icon.addEventListener('click', showInfoModal);
 });
-
 
 
