@@ -3,6 +3,11 @@ let latestProfitUsd = 0;
 let latestExchangeRate = 0;
 let currentROI = null;
 
+// 해시레이트 단위를 가져오는 함수
+function getHashrateUnit() {
+  return document.querySelector('input[name="hashrate_unit"]:checked').value;
+}
+
 // BTC 시세를 가져오는 함수
 async function fetchBTCPrice() {
   const customInput = document.getElementById("custom_btc_price");
@@ -42,6 +47,7 @@ async function fetchExchangeRate() {
     return 1300; // fallback 값 (1 USD = 1300 KRW)
   }
 }
+
 
 // 블록 보상량을 가져오는 함수
 function getBlockReward() {
