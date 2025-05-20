@@ -205,7 +205,7 @@ if (roi) {
   const recoveryText = document.getElementById("investmentRecoveryText");
   recoveryText.style.display = "block";
   recoveryText.innerHTML = `
-    <span class="green-circle" style=\"text-padding:10px;\">■</span>
+    <span class="green-circle" style=\"margin-left:10px;\">■</span>
     <span class="recovery-text">투자금액을 회수하는 시점은 <strong>${roi}일</strong>입니다.</span>
   `;
 }
