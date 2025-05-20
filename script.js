@@ -72,7 +72,7 @@ async function fetchExchangeRate() {
   } catch (e) {
     console.error("환율 불러오기 실패:", e);
 
-    // ✅ BTC 시세처럼 수동 입력을 유도
+    // USD 시세 수동 입력을 유도
     alert("환율 정보를 불러오지 못했습니다. 아래 환율 입력란에 직접 입력해주세요.");
 
     return null; // 여기서 강제로 null 반환
@@ -263,7 +263,9 @@ if (roi) {
           type: 'linear',
           ticks: {
             callback: value => `${value} BTC`
-          }
+          },
+        grid: {
+        drawOnChartArea: false
         }
       }
     }
