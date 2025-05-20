@@ -23,7 +23,8 @@ async function fetchBTCPrice() {
   // 캐시가 존재하고, 캐시된 시세가 1시간 이내에 저장된 경우 캐시된 값 사용
   if (cachedBTCPrice && cachedTime && (Date.now() - cachedTime) < 3600000) {
     console.log("캐시된 비트코인 시세 사용");
-    customInput.value = parseFloat(cachedBTCPrice).toFixed(0);  // 캐시된 시세 자동 채워넣기
+    const formattedPrice = parseFloat(cachedBTCPrice).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    customInput.value = formattedPrice;
     return parseFloat(cachedBTCPrice);
   }
 
@@ -38,7 +39,8 @@ async function fetchBTCPrice() {
     localStorage.setItem("cached_btc_time", Date.now());   // 마지막 업데이트 시간 저장
 
     // 시세를 자동으로 input 필드에 채움
-    customInput.value = newBTCPrice.toFixed(0);
+    const formattedPrice = newBTCPrice.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    customInput.value = formattedPrice;
     
     // 시세 반환
     return newBTCPrice;
