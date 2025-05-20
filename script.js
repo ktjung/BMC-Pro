@@ -176,6 +176,7 @@ async function calculate() {
 
   // 결과 애니메이션
   document.getElementById("output").classList.add("show");
+}
 
 // 차트 그리기
 function drawChart(dailyProfit, hardwareCost, roi, dailyBTC = 0) {
