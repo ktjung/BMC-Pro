@@ -7,7 +7,7 @@ let currentROI = null;
 async function fetchBTCPrice() {
   const customInput = document.getElementById("custom_btc_price");
   const customPrice = parseFloat(customInput.value);
-  
+
   // 사용자가 이미 수동으로 입력했다면 그 값을 사용
   if (!isNaN(customPrice) && customPrice > 0) return customPrice;
 
@@ -20,7 +20,7 @@ async function fetchBTCPrice() {
     // 실패 시 사용자에게 안내하고 수동 입력 유도
     console.error("BTC 시세 불러오기 실패:", e);
     alert("BTC 시세를 불러오지 못했습니다. 아래 입력창에 가격을 직접 입력해주세요.");
-    
+
     // 수동 입력을 기다리도록 null 반환
     return null;
   }
@@ -59,7 +59,7 @@ async function calculate() {
   const hashrate = parseFloat(document.getElementById("hashrate").value);
   const powerRate = parseFloat(document.getElementById("power").value);
   const electricity = parseFloat(document.getElementById("electricity").value);
-  const feePercent = parseFloat(document.getElementById("fee").value);
+  const feePercent = parseFloat(document.getElementById("fee").value) || 1; // 풀 수수료 기본값 1%
   const hardwareCost = parseFloat(document.getElementById("hardware_cost").value);
   const hours = parseFloat(document.getElementById("hours").value);
 
@@ -78,10 +78,14 @@ async function calculate() {
 
   const userHashrateHps = userHashrate * 1e12;
   let dailyBTC = blockRewardBTC * blocksPerDay * (userHashrateHps / (networkHashrate * 1e12));
-  dailyBTC *= (1 - feePercent / 100);
 
-  const revenueBeforeFee = dailyBTC * btcPrice;
-  const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * feePercent / 100); 
+  // 풀 수수료 반영
+  const feeRate = feePercent / 100;
+  const dailyBTCAfterFee = dailyBTC * (1 - feeRate); // 수수료 반영 후 채굴량
+
+  const revenueBeforeFee = dailyBTCAfterFee * btcPrice;
+  const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * feeRate);
+
   const powerInKW = powerRate * userHashrate;
   const dailyCost = powerInKW * hours * electricity;
   const dailyProfit = revenueAfterFee - dailyCost;
@@ -90,15 +94,15 @@ async function calculate() {
   currentROI = dailyProfit > 0 ? Math.ceil(hardwareCost / dailyProfit) : null;
 
   // BTC 환산 값
-  const revenueInBTC = btcPrice > 0 ? revenueAfterFee / btcPrice : 0;
+  const revenueInBTC = dailyBTCAfterFee;
   const costInBTC = btcPrice > 0 ? dailyCost / btcPrice : 0;
   const profitInBTC = btcPrice > 0 ? dailyProfit / btcPrice : 0;
 
   // 결과 화면에 출력
   document.getElementById("btc_price").textContent = btcPrice.toFixed(2);
-  document.getElementById("daily_btc").textContent = dailyBTC.toFixed(8);
-  document.getElementById("monthly_btc").textContent = (dailyBTC * 30).toFixed(8);
-  document.getElementById("yearly_btc").textContent = (dailyBTC * 365).toFixed(8);
+  document.getElementById("daily_btc").textContent = dailyBTCAfterFee.toFixed(8);
+  document.getElementById("monthly_btc").textContent = (dailyBTCAfterFee * 30).toFixed(8);
+  document.getElementById("yearly_btc").textContent = (dailyBTCAfterFee * 365).toFixed(8);
 
   document.getElementById("daily_rev").textContent =
     `${revenueAfterFee.toFixed(2)} (${revenueInBTC.toFixed(8)} BTC)`;
@@ -111,22 +115,21 @@ async function calculate() {
 
   document.getElementById("output").classList.add("show");
 
-  drawChart(dailyProfit, hardwareCost, currentROI, dailyBTC);
+  drawChart(dailyProfit, hardwareCost, currentROI, dailyBTCAfterFee);
 }
-
 
 // 차트 그리기
 function drawChart(dailyProfit, hardwareCost, roi, dailyBTC = 0) {
   let labels = [1, 7, 30, 100, 200, 300, 365];
 
-if (roi) {
-  const maxDay = Math.ceil(roi * 1.2); // ROI 이후도 볼 수 있도록 최대일 확장 (120%)
-  for (let i = 1; i <= maxDay; i++) {
-    if (![1, 7, 30, 100, 200, 300, 365].includes(i) && (i % 100 === 0 || i === roi || i === maxDay)) {
-      labels.push(i);
+  if (roi) {
+    const maxDay = Math.ceil(roi * 1.2); // ROI 이후도 볼 수 있도록 최대일 확장 (120%)
+    for (let i = 1; i <= maxDay; i++) {
+      if (![1, 7, 30, 100, 200, 300, 365].includes(i) && (i % 100 === 0 || i === roi || i === maxDay)) {
+        labels.push(i);
+      }
     }
   }
-}
 
   labels.sort((a, b) => a - b);
   const profits = labels.map(day => +(dailyProfit * day).toFixed(2));
@@ -142,36 +145,36 @@ if (roi) {
   const ctx = document.getElementById("profitChart").getContext("2d");
   if (chart) chart.destroy();
 
-chart = new Chart(ctx, {
-  type: "bar",
-  data: {
-    labels: labels.map(l => `${l}일`),
-    datasets: [
-      {
-        type: 'line',
-        label: "BTC 채굴량",
-        data: btcAmounts,
-        borderColor: "orange",
-        backgroundColor: "rgba(255, 165, 0, 0.3)",
-        yAxisID: 'y1',
-        tension: 0.3,
-        borderWidth: 3,
-        zIndex: 100
-      },
-      {
-        label: "순이익 ($)",
-        data: profits,
-        backgroundColor: barColors,
-        yAxisID: 'y',
-      },
-      {
-        label: "투자금 ($)",
-        data: investments,
-        backgroundColor: "rgba(128, 128, 128, 0.4)",
-        yAxisID: 'y',
-      }
-    ]
-  },
+  chart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labels.map(l => `${l}일`),
+      datasets: [
+        {
+          type: 'line',
+          label: "BTC 채굴량",
+          data: btcAmounts,
+          borderColor: "orange",
+          backgroundColor: "rgba(255, 165, 0, 0.3)",
+          yAxisID: 'y1',
+          tension: 0.3,
+          borderWidth: 3,
+          zIndex: 100
+        },
+        {
+          label: "순이익 ($)",
+          data: profits,
+          backgroundColor: barColors,
+          yAxisID: 'y',
+        },
+        {
+          label: "투자금 ($)",
+          data: investments,
+          backgroundColor: "rgba(128, 128, 128, 0.4)",
+          yAxisID: 'y',
+        }
+      ]
+    },
     options: {
       responsive: true,
       plugins: {
@@ -208,16 +211,16 @@ chart = new Chart(ctx, {
       }
     }
   });
-  
-// 투자금액 회수 시점 문구 표시
-if (roi) {
-  const recoveryText = document.getElementById("investmentRecoveryText");
-  recoveryText.style.display = "block";
-  recoveryText.innerHTML = `
-    <span class="green-circle">■</span>
-    <span class="recovery-text">투자금액을 회수하는 시점은 <strong>${roi}일</strong>입니다.</span>
-  `;
-}
+
+  // 투자금액 회수 시점 문구 표시
+  if (roi) {
+    const recoveryText = document.getElementById("investmentRecoveryText");
+    recoveryText.style.display = "block";
+    recoveryText.innerHTML = `
+      <span class="green-circle">■</span>
+      <span class="recovery-text">투자금액을 회수하는 시점은 <strong>${roi}일</strong>입니다.</span>
+    `;
+  }
 }
 
 // 환율 모달 창 열기
@@ -253,54 +256,24 @@ function showInfoModal(event) {
 
   switch (type) {
     case 'Instructions':
-        infoText = "<span class=\"info-text\" style=\"display:block;text-align:left;line-height:1.6;font-size:15px;\">각 입력란에는 기본값이 세팅되어있습니다.<br><br>" +
-                   "① 입력란에 각자에 맞게 값을 입력하세요<br>" +
-                   "② [계산하기] 버튼을 눌러서 $(USD) 수익을 확인하세요<br>" +
-                   "③ [환율적용] 버튼을 눌러서 KRW 수익을 확인하세요</span><br>" +
-                   "<span style=\"color:#ff4d4d;font-size:0.9em;\">*BTC시세, USD 환율은 자동으로 현재 시세를 반영합니다.</span><br>" +
-                   "<span class=\"info-text blue\" style='font-size: 0.9em;'>*각 항목별 ⓘ 버튼을 눌르면 설명이 나와있습니다.</span><br>" +
-                   "변동시 직접입력하세요.";          
-        break;
-    case 'block_reward':
-        infoText = "비트코인 블록 보상량 (현재 기본값: 3.125 BTC)<br><span style='color:#ff4d4d; font-size: 0.9em;'>*입력하지 않으면 자동으로 3.123 BTC로 적용됩니다.</span><br>변동시 직접입력하세요.";
-        break;
-    case 'btc_price':
-        infoText = "비트코인 시세 ($USD). <br>이 값에 따라 수익이 달라집니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*입력하지 않으면 자동으로 실시간 $시세가 적용됩니다.</span>";
-        break;
-    case 'usd_krw':
-        infoText = "1$ USD → KRW 환율 입력란입니다.<br>이를 통해 원화 수익을 계산할 수 있습니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*입력하지 않으면 자동으로 실시간 환율이 적용됩니다.</span>";
-        break;
-
-    case 'hashrate':
-        infoText = "채굴 장비의 해시레이트를 단위를 선택하고 <br> 실제 해시레이트 파워를 입력하세요. <br><span style='color:#ff4d4d; font-size: 0.9em;'>*입력하지 않으면 자동으로 670 TH/s로 적용됩니다.</span>";
-        break;
-    case 'electricity':
-        infoText = "채굴에 필요한 1시간의 <br>kw 전력 소비 비용을 의미합니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 0.036 $/kwh로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
-        break;
-    case 'power':
-        infoText = "장비가 채굴을 위해 사용하는<br>1시간의 kw 전기의 양입니다. <br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 0.019 kw/TH로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
-        break;
-    case 'hours':
-        infoText = "하루 중 채굴하는 시간을 설정합니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 24h로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
+        infoText = "<span class=\"info-text\" style=\"display:block;text-align:left;line-height:1.6;font-size:15px;\">각 입력란에는 기본값이 세팅되어 있으며, 각 항목에 대해 값을 변경하면 실시간으로 결과를 확인하실 수 있습니다.</span>";
         break;
     case 'fee':
-        infoText = "채굴 풀에서 부과하는 수수료입니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 23.4%로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
+        infoText = "<span class=\"info-text\" style=\"display:block;text-align:left;line-height:1.6;font-size:15px;\">수수료 항목을 변경하면 채굴량에서 자동으로 반영됩니다.</span>";
         break;
-    case 'hardware_cost':
-        infoText = "채굴에 필요한 장비에 투자한 금액입니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 $10,500(USD)로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
+    default:
         break;
   }
-
   document.getElementById("infoText").innerHTML = infoText;
-  document.getElementById("infoModal").classList.add("show");
+  document.getElementById("infoModal").classList.add("open");
 }
 
-// 정보 모달 닫기
+// 닫기
 function closeInfoModal() {
-  document.getElementById("infoModal").classList.remove("show");
+  document.getElementById("infoModal").classList.remove("open");
 }
 
-// 모든 info-icon에 클릭 이벤트 추가
-document.querySelectorAll('.info-icon').forEach(icon => {
-  icon.addEventListener('click', showInfoModal);
+// 페이지 로딩 시 계산 및 차트 표시
+document.addEventListener('DOMContentLoaded', function () {
+  calculate();
 });
