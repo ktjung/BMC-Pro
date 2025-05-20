@@ -80,8 +80,7 @@ async function calculate() {
   let dailyBTC = blockRewardBTC * blocksPerDay * (userHashrateHps / (networkHashrate * 1e12));
 
   // 풀 수수료 반영
-  const feeRate = feePercent / 100;
-  const dailyBTCAfterFee = dailyBTC * (1 - feeRate); // 수수료 반영 후 채굴량
+  const dailyBTCAfterFee = feePercent > 0 ? dailyBTC * (1 - feePercent / 100) : dailyBTC;
 
   const revenueBeforeFee = dailyBTCAfterFee * btcPrice;
   const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * feeRate);
