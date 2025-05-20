@@ -118,6 +118,11 @@ async function calculate() {
   drawChart(dailyProfit, hardwareCost, currentROI, dailyBTCAfterFee);
 }
 
+// 계산 하기
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById("calculateButton").addEventListener('click', calculate);
+});
+
 // 차트 그리기
 function drawChart(dailyProfit, hardwareCost, roi, dailyBTC = 0) {
   let labels = [1, 7, 30, 100, 200, 300, 365];
@@ -306,7 +311,5 @@ document.querySelectorAll('.info-icon').forEach(icon => {
   icon.addEventListener('click', showInfoModal);
 });
 
-// 계산 버튼 클릭 시
-document.getElementById("calculateButton").addEventListener('click', calculate);
 
 
