@@ -60,6 +60,7 @@ async function calculate() {
   const powerRate = parseFloat(document.getElementById("power").value);
   const electricity = parseFloat(document.getElementById("electricity").value);
   const feePercent = parseFloat(document.getElementById("fee").value);
+  const hardwareCost = parseFloat(document.getElementById("hardware_cost").value);
   const hours = parseFloat(document.getElementById("hours").value);
 
   const btcPrice = await fetchBTCPrice(); // 비트코인 시세
@@ -76,24 +77,17 @@ async function calculate() {
   if (unit === "MH/s") userHashrate *= 0.000001;
 
   const userHashrateHps = userHashrate * 1e12;
+  let dailyBTC = blockRewardBTC * blocksPerDay * (userHashrateHps / (networkHashrate * 1e12));
+  dailyBTC *= (1 - feePercent / 100);
 
-  // 채굴량 계산
-  let dailyBTC = totalNetworkDailyBTC * (userHashrateHps / (networkHashrate * 1e12));
-
-  // 풀 수수료를 반영한 채굴량 계산
-  const dailyBTCWithFee = dailyBTC * (1 - feePercent / 100);
-
+  const revenueBeforeFee = dailyBTC * btcPrice;
+  const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * feePercent / 100);
   const powerInKW = powerRate * userHashrate;
   const dailyCost = powerInKW * hours * electricity;
   const dailyProfit = revenueAfterFee - dailyCost;
 
   latestProfitUsd = dailyProfit;
   currentROI = dailyProfit > 0 ? Math.ceil(hardwareCost / dailyProfit) : null;
-
-  // BTC 환산 값
-  const revenueInBTC = dailyBTCAfterFee;
-  const costInBTC = btcPrice > 0 ? dailyCost / btcPrice : 0;
-  const profitInBTC = btcPrice > 0 ? dailyProfit / btcPrice : 0;
 
   // 결과 화면에 출력
   document.getElementById("btc_price").textContent = btcPrice.toFixed(2);
@@ -125,14 +119,14 @@ document.addEventListener('DOMContentLoaded', function() {
 function drawChart(dailyProfit, hardwareCost, roi, dailyBTC = 0) {
   let labels = [1, 7, 30, 100, 200, 300, 365];
 
-  if (roi) {
-    const maxDay = Math.ceil(roi * 1.2); // ROI 이후도 볼 수 있도록 최대일 확장 (120%)
-    for (let i = 1; i <= maxDay; i++) {
-      if (![1, 7, 30, 100, 200, 300, 365].includes(i) && (i % 100 === 0 || i === roi || i === maxDay)) {
-        labels.push(i);
-      }
+if (roi) {
+  const maxDay = Math.ceil(roi * 1.2); // ROI 이후도 볼 수 있도록 최대일 확장 (120%)
+  for (let i = 1; i <= maxDay; i++) {
+    if (![1, 7, 30, 100, 200, 300, 365].includes(i) && (i % 100 === 0 || i === roi || i === maxDay)) {
+      labels.push(i);
     }
   }
+}
 
   labels.sort((a, b) => a - b);
   const profits = labels.map(day => +(dailyProfit * day).toFixed(2));
