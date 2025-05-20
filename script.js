@@ -86,7 +86,7 @@ async function calculate() {
   dailyBTC *= (1 - feePercent / 100); 
 
   // 일일 채굴량과 수익을 모두 수수료 반영하여 계산
-  const revenueBeforeFee = dailyBTC * btcPrice; 
+  let const revenueBeforeFee = dailyBTC * btcPrice; 
   const revenueAfterFee = revenueBeforeFee; 
 
   // 전기 요금 계산
