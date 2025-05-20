@@ -269,6 +269,7 @@ if (roi) {
           },
         grid: {
         drawOnChartArea: false
+          }
         }
       }
     }
