@@ -59,8 +59,10 @@ async function calculate() {
   const exchangeRate = await fetchExchangeRate(); // 환율
   latestExchangeRate = exchangeRate; // 최신 환율 저장
   const blockRewardBTC = getBlockReward();
-  const blocksPerDay = 144;
-  const networkHashrate = 500000000; // TH/s 기준
+  const blocksPerDay = 144;  // 하루 블록 수 (24시간 기준)
+
+  const totalNetworkDailyBTC = 462;  // 하루 전체 네트워크 채굴량 (450 + 거래 수수료 12개)
+  const networkHashrate = 867000000;  // 전체 네트워크 해시레이트 (867 EH/s)
 
   let userHashrate = hashrate;
   const unit = getHashrateUnit();
@@ -68,13 +70,20 @@ async function calculate() {
   if (unit === "MH/s") userHashrate *= 0.000001;
 
   const userHashrateHps = userHashrate * 1e12;
-  let dailyBTC = blockRewardBTC * blocksPerDay * (userHashrateHps / (networkHashrate * 1e12));
-  dailyBTC *= (1 - feePercent / 100);
+
+  // 사용자 해시레이트와 네트워크 해시레이트 비율로 채굴량 계산
+  let dailyBTC = totalNetworkDailyBTC * (userHashrateHps / (networkHashrate * 1e12));
+
+  // 수수료 반영
+  dailyBTC *= (1 - feePercent / 100);  // 수수료 반영된 채굴 수익
 
   const revenueBeforeFee = dailyBTC * btcPrice;
   const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * feePercent / 100); 
+
   const powerInKW = powerRate * userHashrate;
   const dailyCost = powerInKW * hours * electricity;
+
+  // 실제 이익 계산
   const dailyProfit = revenueAfterFee - dailyCost;
 
   latestProfitUsd = dailyProfit;
