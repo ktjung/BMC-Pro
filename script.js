@@ -83,7 +83,7 @@ async function calculate() {
   const dailyBTCAfterFee = feePercent > 0 ? dailyBTC * (1 - feePercent / 100) : dailyBTC;
 
   const revenueBeforeFee = dailyBTCAfterFee * btcPrice;
-  const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * feeRate);
+  const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * (feePercent / 100));
 
   const powerInKW = powerRate * userHashrate;
   const dailyCost = powerInKW * hours * electricity;
