@@ -180,7 +180,6 @@ async function calculate() {
     recoveryText.style.display = "block";
     recoveryText.innerHTML = 
       `<span class="recovery-text" style='color:#ff4d4d;>*그래프 항목 터치 on/off)</span>`;
-  }
 }
 
 // 차트 그리기
