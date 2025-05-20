@@ -47,7 +47,6 @@ function getHashrateUnit() {
 }
 
 // 계산을 시작하는 함수
-// 계산을 시작하는 함수
 async function calculate() {
   const hashrate = parseFloat(document.getElementById("hashrate").value);
   const powerRate = parseFloat(document.getElementById("power").value);
