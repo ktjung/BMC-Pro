@@ -86,7 +86,7 @@ async function calculate() {
   // 수수료 반영
   dailyBTC *= (1 - feePercent / 100); 
 
-  // 일일 채굴량을 기준으로 수익 계산 (수수료 반영 전)
+  // 일일 채굴량에 맞춰 수익 계산 (수수료 반영 후)
   let revenueBeforeFee = dailyBTC * btcPrice;
 
   // 수수료 반영된 수익 계산
@@ -127,9 +127,9 @@ async function calculate() {
   document.getElementById("output").classList.add("show");  // 결과 화면 보이기
 
   // 일일 수익(BTC)로 환산하여, 그 값을 USD로 표시
-  const dailyProfitInBTC = profitInBTC;
-  const dailyProfitInUSD = dailyProfitInBTC * btcPrice;
-  document.getElementById("daily_profit_usd").textContent = `${dailyProfitInUSD.toFixed(2)} ($)`;
+  const dailyProfitInBTC = profitInBTC; // dailyProfit을 profitInBTC로 맞춰줍니다.
+  const dailyProfitInUSD = dailyProfitInBTC * btcPrice; // 일일 수익을 BTC에서 USD로 환산
+  document.getElementById("daily_profit_usd").textContent = `${dailyProfitInUSD.toFixed(2)} ($)`; // 수익을 USD로 출력
 
 // ROI 그래프 그리기 (일일 순수익, 하드웨어 비용, ROI, 일일 채굴량)
 drawChart(dailyProfit, hardwareCost, currentROI, dailyBTC);
