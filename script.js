@@ -255,7 +255,10 @@ if (roi) {
         y: {
           ticks: {
             beginAtZero: true,
-            callback: value => `$${value}`
+            callback: value => `$${value.toLocaleString()}`
+          },
+        grid: {
+        drawOnChartArea: true 
           }
         },
         y1: {
