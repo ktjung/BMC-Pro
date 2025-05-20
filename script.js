@@ -306,7 +306,7 @@ function showInfoModal(event) {
         infoText = "하루 중 채굴하는 시간을 설정합니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 24h로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
         break;
     case 'fee':
-        infoText = "채굴 풀에서 부과하는 수수료입니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 23.4%로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
+        infoText = "채굴 풀에서 부과하는 수수료입니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 1%로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
         break;
     case 'hardware_cost':
         infoText = "채굴에 필요한 장비에 투자한 금액입니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 $10,500(USD)로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
