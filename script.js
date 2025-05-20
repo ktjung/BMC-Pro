@@ -36,6 +36,9 @@ async function fetchBTCPrice() {
     localStorage.setItem("cached_btc_price", newBTCPrice);  // 비트코인 시세 저장
     localStorage.setItem("cached_btc_time", Date.now());   // 마지막 업데이트 시간 저장
 
+    // 시세를 자동으로 input 필드에 소수점 8자리까지 채움
+    customInput.value = newBTCPrice.toFixed(8);
+    
     // 시세 반환
     return newBTCPrice;
   } catch (e) {
