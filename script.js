@@ -148,7 +148,7 @@ async function calculate() {
   }
 
   // 결과 출력
-  document.getElementById("btc_price").textContent = btcPrice.toFixed(2);
+  document.getElementById("btc_price").textContent = btcPrice.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   document.getElementById("daily_btc").textContent = dailyBTCWithFee.toFixed(8);
   document.getElementById("monthly_btc").textContent = (dailyBTCWithFee * 30).toFixed(8);
   document.getElementById("yearly_btc").textContent = (dailyBTCWithFee * 365).toFixed(8);
