@@ -7,7 +7,7 @@ let currentROI = null;
 async function fetchBTCPrice() {
   const customInput = document.getElementById("custom_btc_price");
   const customPrice = parseFloat(customInput.value);
-
+  
   // 사용자가 이미 수동으로 입력했다면 그 값을 사용
   if (!isNaN(customPrice) && customPrice > 0) return customPrice;
 
@@ -20,7 +20,7 @@ async function fetchBTCPrice() {
     // 실패 시 사용자에게 안내하고 수동 입력 유도
     console.error("BTC 시세 불러오기 실패:", e);
     alert("BTC 시세를 불러오지 못했습니다. 아래 입력창에 가격을 직접 입력해주세요.");
-
+    
     // 수동 입력을 기다리도록 null 반환
     return null;
   }
@@ -59,7 +59,7 @@ async function calculate() {
   const hashrate = parseFloat(document.getElementById("hashrate").value);
   const powerRate = parseFloat(document.getElementById("power").value);
   const electricity = parseFloat(document.getElementById("electricity").value);
-  const feePercent = parseFloat(document.getElementById("fee").value) || 1; // 풀 수수료 기본값 1%
+  const feePercent = parseFloat(document.getElementById("fee").value);
   const hardwareCost = parseFloat(document.getElementById("hardware_cost").value);
   const hours = parseFloat(document.getElementById("hours").value);
 
@@ -78,14 +78,10 @@ async function calculate() {
 
   const userHashrateHps = userHashrate * 1e12;
   let dailyBTC = blockRewardBTC * blocksPerDay * (userHashrateHps / (networkHashrate * 1e12));
+  dailyBTC *= (1 - feePercent / 100);
 
-  // 풀 수수료 반영
-  const feeRate = feePercent / 100;
-  const dailyBTCAfterFee = dailyBTC * (1 - feeRate); // 수수료 반영 후 채굴량
-
-  const revenueBeforeFee = dailyBTCAfterFee * btcPrice;
-  const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * feeRate);
-
+  const revenueBeforeFee = dailyBTC * btcPrice;
+  const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * feePercent / 100); 
   const powerInKW = powerRate * userHashrate;
   const dailyCost = powerInKW * hours * electricity;
   const dailyProfit = revenueAfterFee - dailyCost;
@@ -94,15 +90,15 @@ async function calculate() {
   currentROI = dailyProfit > 0 ? Math.ceil(hardwareCost / dailyProfit) : null;
 
   // BTC 환산 값
-  const revenueInBTC = dailyBTCAfterFee;
+  const revenueInBTC = btcPrice > 0 ? revenueAfterFee / btcPrice : 0;
   const costInBTC = btcPrice > 0 ? dailyCost / btcPrice : 0;
   const profitInBTC = btcPrice > 0 ? dailyProfit / btcPrice : 0;
 
   // 결과 화면에 출력
   document.getElementById("btc_price").textContent = btcPrice.toFixed(2);
-  document.getElementById("daily_btc").textContent = dailyBTCAfterFee.toFixed(8);
-  document.getElementById("monthly_btc").textContent = (dailyBTCAfterFee * 30).toFixed(8);
-  document.getElementById("yearly_btc").textContent = (dailyBTCAfterFee * 365).toFixed(8);
+  document.getElementById("daily_btc").textContent = dailyBTC.toFixed(8);
+  document.getElementById("monthly_btc").textContent = (dailyBTC * 30).toFixed(8);
+  document.getElementById("yearly_btc").textContent = (dailyBTC * 365).toFixed(8);
 
   document.getElementById("daily_rev").textContent =
     `${revenueAfterFee.toFixed(2)} (${revenueInBTC.toFixed(8)} BTC)`;
@@ -115,7 +111,7 @@ async function calculate() {
 
   document.getElementById("output").classList.add("show");
 
-  drawChart(dailyProfit, hardwareCost, currentROI, dailyBTCAfterFee);
+  drawChart(dailyProfit, hardwareCost, currentROI, dailyBTC);
 }
 
 // 차트 그리기
@@ -211,15 +207,14 @@ function drawChart(dailyProfit, hardwareCost, roi, dailyBTC = 0) {
       }
     }
   });
-
+  
   // 투자금액 회수 시점 문구 표시
   if (roi) {
     const recoveryText = document.getElementById("investmentRecoveryText");
     recoveryText.style.display = "block";
-    recoveryText.innerHTML = `
-      <span class="green-circle">■</span>
-      <span class="recovery-text">투자금액을 회수하는 시점은 <strong>${roi}일</strong>입니다.</span>
-    `;
+    recoveryText.innerHTML = 
+      `<span class="green-circle">■</span>
+      <span class="recovery-text">투자금액을 회수하는 시점은 <strong>${roi}일</strong>입니다.</span>`;
   }
 }
 
@@ -244,36 +239,26 @@ function closeModal() {
   document.getElementById("exchangeModal").classList.remove("open");
 }
 
-// 다크 모드 토글
-document.getElementById("darkToggle").addEventListener("change", function () {
-  document.body.classList.toggle("dark-mode", this.checked);
+// 모든 info-icon에 클릭 이벤트 추가
+document.querySelectorAll('.info-icon').forEach(icon => {
+  icon.addEventListener('click', showInfoModal);
 });
 
-// 정보 모달 열기
-function showInfoModal(event) {
-  const type = event.target.getAttribute('data-info'); // data-info 속성 값 가져오기
-  let infoText = "";
+// 다크 모드 토글
+document.getElementById("toggleDarkMode").addEventListener('click', function () {
+  document.body.classList.toggle('dark');
+});
 
-  switch (type) {
-    case 'Instructions':
-        infoText = "<span class=\"info-text\" style=\"display:block;text-align:left;line-height:1.6;font-size:15px;\">각 입력란에는 기본값이 세팅되어 있으며, 각 항목에 대해 값을 변경하면 실시간으로 결과를 확인하실 수 있습니다.</span>";
-        break;
-    case 'fee':
-        infoText = "<span class=\"info-text\" style=\"display:block;text-align:left;line-height:1.6;font-size:15px;\">수수료 항목을 변경하면 채굴량에서 자동으로 반영됩니다.</span>";
-        break;
-    default:
-        break;
-  }
-  document.getElementById("infoText").innerHTML = infoText;
-  document.getElementById("infoModal").classList.add("open");
-}
-
-// 닫기
-function closeInfoModal() {
-  document.getElementById("infoModal").classList.remove("open");
-}
-
-// 페이지 로딩 시 계산 및 차트 표시
-document.addEventListener('DOMContentLoaded', function () {
-  calculate();
+// 초기화 버튼
+document.getElementById("resetButton").addEventListener('click', function() {
+  // 필드들 초기화
+  document.getElementById("hashrate").value = "";
+  document.getElementById("power").value = "";
+  document.getElementById("electricity").value = "";
+  document.getElementById("fee").value = "";
+  document.getElementById("hardware_cost").value = "";
+  document.getElementById("hours").value = "";
+  
+  // 결과 화면 숨기기
+  document.getElementById("output").classList.remove("show");
 });
