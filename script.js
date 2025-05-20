@@ -303,32 +303,43 @@ document.querySelectorAll('.info-icon').forEach(icon => {
   icon.addEventListener('click', showInfoModal);
 });
 
-// 초기화 버튼 기능
-document.getElementById("resetButton").addEventListener('click', function() {
-  // 모든 입력 필드를 초기화
-  document.getElementById("hashrate").value = "";
-  document.getElementById("power").value = "";
-  document.getElementById("electricity").value = "";
-  document.getElementById("fee").value = "";
-  document.getElementById("hardware_cost").value = "";
-  document.getElementById("hours").value = "";
-  
-  // 결과 화면 숨기기
-  document.getElementById("output").classList.remove("show");
-  
-  // 차트 초기화
-  if (chart) chart.destroy();
-});
-
 // 계산 버튼 클릭 시
 document.getElementById("calculateButton").addEventListener('click', calculate);
 
-// 다크 모드 토글 기능
-document.getElementById("darkToggle").addEventListener('change', function () {
-  if (this.checked) {
-    document.body.classList.add('dark'); // 체크된 상태 (다크 모드)
-  } else {
-    document.body.classList.remove('dark'); // 체크 해제 상태 (일반 모드)
-  }
-});
+  // 페이지 로드 시 다크 모드 상태 체크
+  window.addEventListener('load', function() {
+    if (localStorage.getItem("darkMode") === "enabled") {
+      document.body.classList.add("dark-mode");
+      document.getElementById("darkToggle").checked = true; // 체크박스 상태 유지
+    }
+  });
+
+  // 다크 모드 토글
+  document.getElementById("darkToggle").addEventListener('change', function() {
+    if (this.checked) {
+      document.body.classList.add("dark-mode");
+      localStorage.setItem("darkMode", "enabled"); // 다크 모드 저장
+    } else {
+      document.body.classList.remove("dark-mode");
+      localStorage.removeItem("darkMode"); // 다크 모드 제거
+    }
+  });
+
+  // 초기화 버튼
+  document.getElementById("resetButton").addEventListener("click", function() {
+    // 다크모드 해제
+    document.body.classList.remove("dark-mode");
+
+    // 모든 input, select 값 초기화
+    const inputs = document.querySelectorAll("input, select");
+    inputs.forEach(input => {
+      if (input.type === "checkbox" || input.type === "radio") {
+        input.checked = false; // 체크박스 및 라디오 버튼 초기화
+      } else {
+        input.value = ""; // 그 외 입력 필드 초기화
+      }
+    });
+
+    // 추가적으로 버튼이나 다른 UI 요소가 있다면 초기화하는 로직을 추가할 수 있습니다.
+  });
 
