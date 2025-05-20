@@ -324,22 +324,3 @@ document.getElementById("calculateButton").addEventListener('click', calculate);
       localStorage.removeItem("darkMode"); // 다크 모드 제거
     }
   });
-
-  // 초기화 버튼
-  document.getElementById("resetButton").addEventListener("click", function() {
-    // 다크모드 해제
-    document.body.classList.remove("dark-mode");
-
-    // 모든 input, select 값 초기화
-    const inputs = document.querySelectorAll("input, select");
-    inputs.forEach(input => {
-      if (input.type === "checkbox" || input.type === "radio") {
-        input.checked = false; // 체크박스 및 라디오 버튼 초기화
-      } else {
-        input.value = ""; // 그 외 입력 필드 초기화
-      }
-    });
-
-    // 추가적으로 버튼이나 다른 UI 요소가 있다면 초기화하는 로직을 추가할 수 있습니다.
-  });
-
