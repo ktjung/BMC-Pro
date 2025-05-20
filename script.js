@@ -88,33 +88,39 @@ async function calculate() {
   // 실제 이익 계산
   const dailyProfit = revenueAfterFee - dailyCost;
 
-  latestProfitUsd = dailyProfit;
-  currentROI = dailyProfit > 0 ? Math.ceil(hardwareCost / dailyProfit) : null;
+  // 최신 수익과 ROI 계산
+  latestProfitUsd = dailyProfit; 
+  currentROI = dailyProfit > 0 ? Math.ceil(hardwareCost / dailyProfit) : null; 
 
-  // BTC 환산 값
-  const revenueInBTC = btcPrice > 0 ? revenueAfterFee / btcPrice : 0;
-  const costInBTC = btcPrice > 0 ? dailyCost / btcPrice : 0;
-  const profitInBTC = btcPrice > 0 ? dailyProfit / btcPrice : 0;
+  // 수수료 반영된 채굴량으로 계산된 일일 수익
+  const revenueBeforeFee = dailyBTC * btcPrice;  
+  const revenueAfterFee = revenueBeforeFee - (revenueBeforeFee * feePercent / 100); 
+
+  // BTC 환산 값 계산
+  const revenueInBTC = btcPrice > 0 ? revenueAfterFee / btcPrice : 0;  
+  const costInBTC = btcPrice > 0 ? dailyCost / btcPrice : 0;  
+  const profitInBTC = btcPrice > 0 ? dailyProfit / btcPrice : 0;  
 
   // 결과 화면에 출력
-  document.getElementById("btc_price").textContent = btcPrice.toFixed(2);
-  document.getElementById("daily_btc").textContent = dailyBTC.toFixed(8);
-  document.getElementById("monthly_btc").textContent = (dailyBTC * 30).toFixed(8);
-  document.getElementById("yearly_btc").textContent = (dailyBTC * 365).toFixed(8);
+  document.getElementById("btc_price").textContent = btcPrice.toFixed(2); 
+  document.getElementById("daily_btc").textContent = dailyBTC.toFixed(8);  
+  document.getElementById("monthly_btc").textContent = (dailyBTC * 30).toFixed(8);  
+  document.getElementById("yearly_btc").textContent = (dailyBTC * 365).toFixed(8);  
 
   document.getElementById("daily_rev").textContent =
-    `${revenueAfterFee.toFixed(2)} (${revenueInBTC.toFixed(8)} BTC)`;
+  `${revenueAfterFee.toFixed(2)} (${revenueInBTC.toFixed(8)} BTC)`;  
   document.getElementById("daily_cost").textContent =
-    `${dailyCost.toFixed(2)} (${costInBTC.toFixed(8)} BTC)`;
+  `${dailyCost.toFixed(2)} (${costInBTC.toFixed(8)} BTC)`;  
   document.getElementById("daily_profit").textContent =
-    `${dailyProfit.toFixed(2)} (${profitInBTC.toFixed(8)} BTC)`;
+  `${dailyProfit.toFixed(2)} (${profitInBTC.toFixed(8)} BTC)`;  
 
-  document.getElementById("roi").textContent = currentROI ? currentROI : "수익 없음";
+  document.getElementById("roi").textContent = currentROI ? currentROI : "수익 없음";  // 투자 회수 기간
 
-  document.getElementById("output").classList.add("show");
+  document.getElementById("output").classList.add("show");  // 결과 화면 보이기
 
-  drawChart(dailyProfit, hardwareCost, currentROI, dailyBTC);
-}
+// ROI 그래프 그리기 (일일 순수익, 하드웨어 비용, ROI, 일일 채굴량)
+drawChart(dailyProfit, hardwareCost, currentROI, dailyBTC);
+
 
 
 // 차트 그리기
