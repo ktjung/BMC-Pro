@@ -33,18 +33,26 @@ async function fetchBTCPrice() {
 
 // 환율을 가져오는 함수 (수동 입력 반영)
 async function fetchExchangeRate() {
-  const customRate = parseFloat(document.getElementById("custom_usd_krw").value); // 수동 입력된 환율
+  const customRate = parseFloat(document.getElementById("custom_usd_krw").value);
   if (!isNaN(customRate) && customRate > 0) {
-    return customRate; // USD → KRW 환율을 그대로 반환
+    return customRate;
   }
 
   try {
-    const res = await fetch("https://api.exchangerate-api.com/v4/latest/USD"); // 환율 API
+    const res = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
     const data = await res.json();
-    return data.rates.KRW; // API에서 받은 환율 (USD → KRW)
+    const rate = data.rates.KRW;
+
+    // 자동으로 input에 채워넣기
+    document.getElementById("custom_usd_krw").value = rate.toFixed(2);
+    return rate;
   } catch (e) {
     console.error("환율 불러오기 실패:", e);
-    return 1300; // fallback 값 (1 USD = 1300 KRW)
+
+    // ✅ BTC 시세처럼 수동 입력을 유도
+    alert("환율 정보를 불러오지 못했습니다. 아래 환율 입력란에 직접 입력해주세요.");
+
+    return null; // 여기서 강제로 null 반환
   }
 }
 
