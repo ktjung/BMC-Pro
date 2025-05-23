@@ -311,7 +311,7 @@ function showInfoModal(event) {
   switch (type) {
     case 'Instructions':
         infoText = "<span class=\"info-text\" style=\"display:block;text-align:left;line-height:1.6;font-size:15px;\">각 입력란에는 기본값이 세팅되어있습니다.<br><br>" +
-                   "① 입력란에 각자에 맞게 값을 입력하세요<br>" +
+                   "① 입력란에 상황에 맞게 값을 입력하세요<br>" +
                    "② [계산하기] 버튼을 눌러서 $(USD) 수익을 확인하세요<br>" +
                    "③ [환율적용] 버튼을 눌러서 KRW 수익을 확인하세요</span><br>" +
                    "<span style=\"color:#ff4d4d;font-size:0.9em;\">*BTC시세, USD 환율은 자동으로 현재 시세를 반영합니다.</span><br>" +
@@ -319,7 +319,7 @@ function showInfoModal(event) {
                    "변동시 직접입력하세요.";          
         break;
     case 'block_reward':
-        infoText = "비트코인 블록 보상량 (현재 기본값: 3.125 BTC)<br><span style='color:#ff4d4d; font-size: 0.9em;'>*입력하지 않으면 자동으로 3.123 BTC로 적용됩니다.</span><br>변동시 직접입력하세요.";
+        infoText = "비트코인 블록 보상량 (현재 기본값: 3.125 BTC)<br><span style='color:#ff4d4d; font-size: 0.9em;'>*입력하지 않으면 자동으로 3.125 BTC로 적용됩니다.</span><br>변동시 수정하세요!";
         break;
     case 'btc_price':
         infoText = "비트코인 시세 ($USD). <br>이 값에 따라 수익이 달라집니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*입력하지 않으면 자동으로 실시간 $시세가 적용됩니다.</span>";
@@ -332,19 +332,19 @@ function showInfoModal(event) {
         infoText = "채굴 장비의 해시레이트를 단위를 선택하고 <br> 실제 해시레이트 파워를 입력하세요. <br><span style='color:#ff4d4d; font-size: 0.9em;'>*입력하지 않으면 자동으로 670 TH/s로 적용됩니다.</span>";
         break;
     case 'electricity':
-        infoText = "채굴에 필요한 1시간의 <br>kw 전력 소비 비용을 의미합니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 0.036 $/kwh로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
+        infoText = "채굴에 필요한 1시간의 <br>kw 전력 소비 비용을 의미합니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 0.036 $/kwh로 적용됩니다. <br>변동시 수정하세요!</span>";
         break;
     case 'power':
-        infoText = "장비가 채굴을 위해 사용하는<br>1시간의 kw 전기의 양입니다. <br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 0.019 kw/TH로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
+        infoText = "장비가 채굴을 위해 사용하는<br>1시간의 kw 전기의 양입니다. <br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 0.019 kw/TH로 적용됩니다. <br>변동시 수정하세요!</span>";
         break;
     case 'hours':
-        infoText = "하루 중 채굴하는 시간을 설정합니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 24h로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
+        infoText = "하루 중 채굴하는 시간을 설정합니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 24h로 적용됩니다. <br>변동시 수정하세요!</span>";
         break;
     case 'fee':
-        infoText = "채굴 풀에서 부과하는 수수료입니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 1%로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
+        infoText = "채굴 풀에서 부과하는 수수료입니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 1%로 적용됩니다. <br>변동시 수정하세요!</span>";
         break;
     case 'hardware_cost':
-        infoText = "채굴에 필요한 장비에 투자한 금액입니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 $10,500(USD)로 적용됩니다. <br>값이 다르다면 수정하세요!</span>";
+        infoText = "채굴에 필요한 장비에 투자한 금액입니다.<br><span style='color:#ff4d4d; font-size: 0.9em;'>*기본값은 $10,500(USD)로 적용됩니다. <br>변동시 수정하세요!</span>";
         break;
   }
 
